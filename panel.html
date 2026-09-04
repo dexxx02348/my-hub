@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  padding:12px;
+  background:#202124;
+  color:#e8eaed;
+  font-family:Arial,Roboto,sans-serif;
+}
+
+.card{
+  background:#292a2d;
+  border:1px solid #3c4043;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:10px;
+}
+
+.label{
+  color:#9aa0a6;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  margin-bottom:9px;
+}
+
+.song{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.art{
+  width:58px;
+  height:58px;
+  border-radius:7px;
+  object-fit:cover;
+  background:#3c4043;
+}
+
+.name{
+  font-size:13px;
+  font-weight:500;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.artist{
+  font-size:11px;
+  color:#9aa0a6;
+  margin-top:3px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+input[type=range]{
+  width:100%;
+  accent-color:#8ab4f8;
+}
+
+.progress{
+  margin-top:9px;
+}
+
+.times{
+  display:flex;
+  justify-content:space-between;
+  color:#9aa0a6;
+  font-size:9px;
+}
+
+.controls{
+  display:flex;
+  justify-content:center;
+  gap:5px;
+  margin-top:8px;
+}
+
+button{
+  border:0;
+  border-radius:8px;
+  height:32px;
+  padding:0 9px;
+  background:#35363a;
+  color:#e8eaed;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#45464a;
+}
+
+.play{
+  background:#8ab4f8;
+  color:#202124;
+  font-weight:500;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+}
+
+.status{
+  color:#9aa0a6;
+  font-size:10px;
+  margin-top:7px;
+}
+
+.game{
+  margin-top:8px;
+  text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+  <div class="label">Spotify</div>
+
+  <div class="song">
+    <img id="art" class="art">
+
+    <div style="min-width:0">
+      <div id="song" class="name">Loading...</div>
+      <div id="artist" class="artist">Spotify</div>
+    </div>
+  </div>
+
+  <div class="progress">
+    <input id="progress" type="range" min="0" max="1000" value="0">
+
+    <div class="times">
+      <span id="current">0:00</span>
+      <span id="duration">0:00</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="prev">⏮</button>
+    <button id="back">−10</button>
+    <button id="play" class="play">▶</button>
+    <button id="forward">+10</button>
+    <button id="next">⏭</button>
+  </div>
+
+  <input id="volume" type="range" min="0" max="100" value="50">
+
+  <div id="status" class="status">
+    Connecting...
+  </div>
+
+</div>
+
+<div class="card">
+
+  <div class="label">Quick Links</div>
+
+  <div class="grid">
+    <button onclick="window.open('https://www.google.com')">Google</button>
+    <button onclick="window.open('https://www.youtube.com')">YouTube</button>
+    <button onclick="window.open('https://drive.google.com')">Drive</button>
+    <button onclick="window.open('https://github.com')">GitHub</button>
+  </div>
+
+</div>
+
+<div class="card">
+
+  <div class="label">Mini Games</div>
+
+  <div class="grid">
+    <button id="clicker">🖱 Clicker</button>
+    <button id="guess">🔢 Guess</button>
+    <button id="reaction">⚡ Reaction</button>
+    <button id="snake">🐍 Snake</button>
+  </div>
+
+  <div id="game" class="game"></div>
+
+</div>
+
+<script>
+
+const CLIENT_ID =
+"d3445d44d1314d07b1d7a7904bbe5a48";
+
+/* Spotify */
+
+async function refreshToken(){
+
+  const refresh =
+    localStorage.getItem("spotify_refresh_token");
+
+  if(!refresh)
+    throw new Error("Spotify not connected.");
+
+  const body=new URLSearchParams({
+    grant_type:"refresh_token",
+    refresh_token:refresh,
+    client_id:CLIENT_ID
+  });
+
+  const r=await fetch(
+    "https://accounts.spotify.com/api/token",
+    {
+      method:"POST",
+      headers:{
+        "Content-Type":
+        "application/x-www-form-urlencoded"
+      },
+      body:body.toString()
+    }
+  );
+
+  const d=await r.json();
+
+  if(!r.ok)
+    throw new Error(
+      d.error_description || "Refresh failed"
+    );
+
+  localStorage.setItem(
+    "spotify_access_token",
+    d.access_token
+  );
+
+  if(d.refresh_token)
+    localStorage.setItem(
+      "spotify_refresh_token",
+      d.refresh_token
+    );
+
+  localStorage.setItem(
+    "spotify_expires_at",
+    Date.now()+d.expires_in*1000
+  );
+
+  return d.access_token;
+}
+
+async function getToken(){
+
+  const token =
+    localStorage.getItem(
+      "spotify_access_token"
+    );
+
+  const expires =
+    Number(
+      localStorage.getItem(
+        "spotify_expires_at"
+      ) || 0
+    );
+
+  if(token && Date.now()<expires-60000)
+    return token;
+
+  return refreshToken();
+}
+
+async function spotify(url,options={}){
+
+  let token=await getToken();
+
+  let r=await fetch(
+    "https://api.spotify.com/v1"+url,
+    {
+      ...options,
+      headers:{
+        ...(options.headers||{}),
+        Authorization:"Bearer "+token
+      }
+    }
+  );
+
+  if(r.status===401){
+
+    token=await refreshToken();
+
+    r=await fetch(
+      "https://api.spotify.com/v1"+url,
+      {
+        ...options,
+        headers:{
+          ...(options.headers||{}),
+          Authorization:"Bearer "+token
+        }
+      }
+    );
+  }
+
+  if(r.status===204)
+    return null;
+
+  const text=await r.text();
+
+  const data=text?JSON.parse(text):null;
+
+  if(!r.ok)
+    throw new Error(
+      data?.error?.message ||
+      "Spotify error "+r.status
+    );
+
+  return data;
+}
+
+function fmt(ms){
+
+  const s=Math.floor(ms/1000);
+
+  return Math.floor(s/60)+":"+
+    String(s%60).padStart(2,"0");
+}
+
+let playback=null;
+
+async function update(){
+
+  try{
+
+    playback=
+      await spotify("/me/player");
+
+    if(!playback||!playback.item){
+
+      song.textContent="Nothing playing";
+      artist.textContent=
+        "Open Spotify and play something";
+      status.textContent="Connected";
+      return;
+    }
+
+    const item=playback.item;
+
+    song.textContent=item.name;
+
+    artist.textContent=
+      item.artists.map(a=>a.name).join(", ");
+
+    const image=
+      item.album?.images?.[1]?.url ||
+      item.album?.images?.[0]?.url;
+
+    if(image)
+      art.src=image;
+
+    const duration=
+      item.duration_ms||0;
+
+    const position=
+      playback.progress_ms||0;
+
+    progress.value=
+      duration ? position/duration*1000 : 0;
+
+    current.textContent=fmt(position);
+    document.getElementById("duration")
+      .textContent=fmt(duration);
+
+    play.textContent=
+      playback.is_playing ? "⏸" : "▶";
+
+    volume.value=
+      playback.device?.volume_percent ?? 50;
+
+    status.textContent=
+      "Device: "+
+      (playback.device?.name||"Spotify");
+
+  }catch(e){
+
+    status.textContent=e.message;
+
+  }
+}
+
+play.onclick=async()=>{
+  await spotify(
+    playback?.is_playing
+      ? "/me/player/pause"
+      : "/me/player/play",
+    {method:"PUT"}
+  );
+  update();
+};
+
+prev.onclick=async()=>{
+  await spotify(
+    "/me/player/previous",
+    {method:"POST"}
+  );
+  setTimeout(update,500);
+};
+
+next.onclick=async()=>{
+  await spotify(
+    "/me/player/next",
+    {method:"POST"}
+  );
+  setTimeout(update,500);
+};
+
+back.onclick=async()=>{
+  if(!playback?.item)return;
+
+  const p=Math.max(
+    0,
+    (playback.progress_ms||0)-10000
+  );
+
+  await spotify(
+    "/me/player/seek?position_ms="+p,
+    {method:"PUT"}
+  );
+
+  update();
+};
+
+forward.onclick=async()=>{
+  if(!playback?.item)return;
+
+  const p=Math.min(
+    playback.item.duration_ms,
+    (playback.progress_ms||0)+10000
+  );
+
+  await spotify(
+    "/me/player/seek?position_ms="+p,
+    {method:"PUT"}
+  );
+
+  update();
+};
+
+progress.onchange=async()=>{
+  if(!playback?.item)return;
+
+  const p=
+    playback.item.duration_ms*
+    progress.value/1000;
+
+  await spotify(
+    "/me/player/seek?position_ms="+
+    Math.floor(p),
+    {method:"PUT"}
+  );
+
+  update();
+};
+
+volume.onchange=async()=>{
+  await spotify(
+    "/me/player/volume?volume_percent="+
+    volume.value,
+    {method:"PUT"}
+  );
+};
+
+
+/* Games */
+
+clicker.onclick=()=>{
+  game.innerHTML=`
+    <div style="font-size:26px;margin:10px">
+      <span id="score">0</span>
+    </div>
+    <button id="click">CLICK</button>
+  `;
+
+  let score=0;
+
+  document.getElementById("click").onclick=()=>{
+    score++;
+    document.getElementById("score")
+      .textContent=score;
+  };
+};
+
+guess.onclick=()=>{
+  const answer=
+    Math.floor(Math.random()*100)+1;
+
+  game.innerHTML=`
+    <input id="guessInput"
+      type="number"
+      placeholder="1-100"
+      style="
+        width:100%;
+        height:32px;
+        background:#202124;
+        color:white;
+        border:1px solid #3c4043;
+        border-radius:8px;
+        padding:0 8px;
+      ">
+    <button id="guessGo">Guess</button>
+    <div id="guessResult"
+      class="status"></div>
+  `;
+
+  document.getElementById("guessGo").onclick=()=>{
+
+    const n=
+      Number(
+        document.getElementById("guessInput").value
+      );
+
+    document.getElementById("guessResult")
+      .textContent=
+        n===answer
+          ?"🎉 Correct!"
+          :n<answer
+            ?"Too low"
+            :"Too high";
+  };
+};
+
+reaction.onclick=()=>{
+
+  game.innerHTML=`
+    <button id="react"
+      style="width:100%;height:100px;font-size:20px">
+      WAIT...
+    </button>
+    <div id="reactResult"
+      class="status"></div>
+  `;
+
+  let ready=false;
+
+  const timer=setTimeout(()=>{
+
+    ready=true;
+
+    react.textContent="GO!";
+
+  },1000+Math.random()*2500);
+
+  react.onclick=()=>{
+
+    if(!ready){
+
+      clearTimeout(timer);
+
+      react.textContent="Too early!";
+
+      return;
+
+    }
+
+    reactResult.textContent="Nice!";
+
+  };
+};
+
+snake.onclick=()=>{
+
+  game.innerHTML=`
+    <div style="padding:20px">
+      🐍 Snake coming next
+    </div>
+  `;
+
+};
+
+update();
+
+setInterval(update,4000);
+
+</script>
+
+</body>
+</html>
