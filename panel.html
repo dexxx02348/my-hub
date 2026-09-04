@@ -1093,6 +1093,176 @@ body.micro-mode.record-style .record {
   }
 }
 
+  /* =====================================================
+   FINAL HUB SIZING FIX
+===================================================== */
+
+/* NORMAL */
+body.normal-mode {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* MINI = compact square-ish player */
+body.mini-mode {
+  width: 100%;
+  height: 100%;
+  padding: 6px;
+  overflow: hidden;
+}
+
+body.mini-mode .player-card {
+  width: 100%;
+  height: 100%;
+  padding: 6px;
+  margin: 0;
+}
+
+body.mini-mode .song {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+body.mini-mode .art-wrap {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+body.mini-mode .art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body.mini-mode .micro-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.mini-mode .topbar {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  z-index: 50;
+}
+
+body.mini-mode .settings-button {
+  display: block;
+  width: 22px;
+  height: 22px;
+  background: rgba(20,20,20,.8);
+}
+
+/* MICRO = ALWAYS PERFECT SQUARE */
+body.micro-mode {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+body.micro-mode .player-card {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+}
+
+body.micro-mode .song {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+body.micro-mode .art-wrap {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  flex: none;
+}
+
+body.micro-mode .art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 9px;
+}
+
+/* MICRO hides everything except art/settings */
+body.micro-mode .section,
+body.micro-mode .song-info,
+body.micro-mode #connectStatus,
+body.micro-mode #playerControls,
+body.micro-mode .quick-section,
+body.micro-mode .games-section {
+  display: none;
+}
+
+/* RECORD MUST STAY ROUND */
+.record-wrap {
+  aspect-ratio: 1 / 1;
+}
+
+.record {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* NORMAL/JUMBO RECORD */
+body.normal-mode .record-wrap,
+body.jumbo-mode .record-wrap {
+  width: 145px;
+  height: 145px;
+  flex: 0 0 145px;
+}
+
+/* MINI RECORD */
+body.mini-mode .record-wrap {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  flex: none;
+}
+
+/* MICRO RECORD */
+body.micro-mode .record-wrap {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  flex: none;
+}
+
+body.micro-mode.record-style .record-wrap {
+  display: flex;
+}
+
+body.micro-mode.record-style .record {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+/* SETTINGS CAN NEVER OUTGROW THE PANEL */
+.settings-panel {
+  max-width: calc(100vw - 8px);
+  max-height: calc(100vh - 8px);
+  overflow-y: auto;
+}
+
 </style>
 </head>
 
