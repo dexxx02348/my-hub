@@ -27,7 +27,17 @@ function tell(type,extra={}){if(window.opener)window.opener.postMessage({type,..
 if(err){msg.textContent="Spotify authorization was cancelled.";msg.className="p bad";tell("spotify-auth-error",{error:err});return}
 if(!code){msg.textContent="No authorization code was received.";msg.className="p bad";return}
 try{
- const verifier=localStorage.getItem("spotify_pkce_verifier");
+ let verifier=localStorage.getItem("spotify_pkce_verifier");
+ if(!verifier && window.opener){
+   verifier=await new Promise(resolve=>{
+     let done=false;
+     const finish=v=>{if(done)return;done=true;window.removeEventListener("message",on);resolve(v||"")};
+     const on=e=>{if(e.origin==="https://dexxx02348.github.io"&&e.source===window.opener&&e.data?.type==="myhub-pkce-response")finish(e.data.verifier)};
+     window.addEventListener("message",on);
+     try{window.opener.postMessage({type:"myhub-pkce-request"},"https://dexxx02348.github.io")}catch(_){}
+     setTimeout(()=>finish(""),1500);
+   });
+ }
  if(!verifier)throw new Error("Missing PKCE verifier.");
  const r=await fetch("https://accounts.spotify.com/api/token",{
    method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},
