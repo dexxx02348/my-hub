@@ -42,7 +42,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 }
 .player-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
 .cover-stage{
-  width:min(100%,290px);height:auto;aspect-ratio:1 / 1;position:relative;min-width:0;overflow:hidden;
+  width:min(100%,290px);height:auto;aspect-ratio:1 / 1;position:relative;min-width:0;max-height:290px;
+  overflow:hidden;align-self:start;justify-self:center;
 }
 .cover{
   display:block;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:cover;object-position:center;
@@ -71,7 +72,7 @@ input[type=range]{width:100%;margin:0;accent-color:var(--accent)}
 /* Record */
 .record-stage{
   width:min(100%,290px);height:auto;aspect-ratio:1 / 1;position:relative;
-  margin:0 auto;overflow:hidden;
+  margin:0 auto;overflow:hidden;align-self:start;justify-self:center;max-height:290px;
 }
 .record{
   position:relative;width:100%;height:100%;aspect-ratio:1/1;border-radius:50%;
@@ -99,12 +100,26 @@ input[type=range]{width:100%;margin:0;accent-color:var(--accent)}
 #app.mini .player{height:calc(100vh - 14px);padding:7px;border-radius:13px}
 #app.mini .player-grid{height:100%;gap:6px}
 #app.mini .cover-stage,#app.mini .record-stage{
-  width:min(100%,230px,calc(100vh - 55px));height:auto;aspect-ratio:1 / 1;align-self:center;
+  width:min(100%,230px,calc(100vh - 55px));height:auto;aspect-ratio:1 / 1;align-self:start;justify-self:center;
+  max-height:230px;
 }
 #app.mini .info,#app.mini .progress,#app.mini .secondary-controls,#app.mini .volume,#app.mini .status,#app.mini .device,#app.mini .connect{display:none}
 #app.mini .controls{margin-top:0}
-#app.mini .ctrl{width:31px;height:31px;background:#252a33}
-#app.mini .ctrl.main{width:40px;height:34px}
+#app.mini .controls{
+  gap:9px;padding:5px 7px;border-radius:999px;background:#11151b;
+  border:1px solid #2e3540;box-shadow:0 6px 18px rgba(0,0,0,.35);
+}
+#app.mini .ctrl{
+  width:34px;height:34px;border-radius:50%;background:#222831;color:#dfe5ed;
+  cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;
+  transition:transform .12s ease,background .12s ease;
+}
+#app.mini .ctrl:hover{background:#303844;transform:scale(1.06)}
+#app.mini .ctrl:active{transform:scale(.94)}
+#app.mini .ctrl.main{
+  width:40px;height:40px;border-radius:50%;background:#f1f4f8;color:#101216;
+  font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,.25);
+}
 #app.mini .player-grid{grid-template-rows:minmax(0,1fr) auto}
 #app.mini .controls{grid-row:2}
 
@@ -117,7 +132,10 @@ input[type=range]{width:100%;margin:0;accent-color:var(--accent)}
   width:100%;height:100%;padding:0;border:0;border-radius:0;background:transparent;
 }
 #app.micro .player-grid{width:100%;height:100%;display:block}
-#app.micro .cover-stage,#app.micro .record-stage{width:100%;height:100%;max-width:none;margin:0;aspect-ratio:1 / 1;overflow:hidden}
+#app.micro .cover-stage,#app.micro .record-stage{
+  width:100%;height:100%;max-width:none;max-height:none;margin:0;aspect-ratio:1 / 1;
+  overflow:hidden;align-self:start;justify-self:start;
+}
 #app.micro .cover{width:100%;height:100%;max-width:none;max-height:none;border-radius:10px}
 #app.micro .info,#app.micro .progress,#app.micro .secondary-controls,#app.micro .volume,#app.micro .status,#app.micro .device,#app.micro .connect{display:none}
 #app.micro .controls{
@@ -133,7 +151,9 @@ input[type=range]{width:100%;margin:0;accent-color:var(--accent)}
 /* Jumbo */
 #app.jumbo{padding:14px}
 #app.jumbo .player-grid{grid-template-columns:minmax(0,1.15fr) minmax(210px,.85fr);align-items:center}
-#app.jumbo .cover-stage,#app.jumbo .record-stage{width:min(100%,380px);height:auto;aspect-ratio:1 / 1;overflow:hidden}
+#app.jumbo .cover-stage,#app.jumbo .record-stage{
+  width:min(100%,380px);height:auto;aspect-ratio:1 / 1;overflow:hidden;align-self:center;justify-self:center;max-height:380px;
+}
 #app.jumbo .info{text-align:left}
 #app.jumbo .title{font-size:21px}
 #app.jumbo .artist{font-size:14px}
@@ -315,13 +335,14 @@ let linksOn=localStorage.getItem("myhub_links")!=="false";
 let gamesOn=localStorage.getItem("myhub_games")!=="false";
 let playback=null,lastRefresh=0,draggingSeek=false;
 let recordAngle=0,recordVelocity=0,recordLastFrame=0,recordRAF=0;
-const RECORD_MAX_SPEED=2*Math.PI/1.8;
+const RECORD_RPM=33+1/3;
+const RECORD_MAX_SPEED=RECORD_RPM*2*Math.PI/60;
 function recordLoop(ts){
   if(!recordLastFrame) recordLastFrame=ts;
   const dt=Math.min((ts-recordLastFrame)/1000,0.05);
   recordLastFrame=ts;
   const target=(style==="record" && playback?.is_playing)?RECORD_MAX_SPEED:0;
-  const response=target?5.0:2.35;
+  const response=target?4.2:2.15;
   recordVelocity += (target-recordVelocity)*(1-Math.exp(-response*dt));
   recordAngle=(recordAngle+recordVelocity*dt)%(Math.PI*2);
   record.style.transform=`rotate(${recordAngle}rad)`;
@@ -343,6 +364,7 @@ function setMode(next,announce=true){
   document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
   localStorage.setItem("myhub_mode",mode);
   if(announce) post("myhub-resize",{mode,width:MODES[mode].w,height:MODES[mode].h});
+  requestAnimationFrame(syncStageSquares);
 }
 function setStyle(next){
   style=next==="record"?"record":"cover";
@@ -364,6 +386,25 @@ function updateSpin(){
     recordLastFrame=0;recordRAF=requestAnimationFrame(recordLoop);
   }
 }
+function forceSquareStage(stage){
+  if(!stage)return;
+  const w=stage.clientWidth;
+  if(w>0) stage.style.height=w+"px";
+}
+function syncStageSquares(){
+  forceSquareStage(coverStage);
+  forceSquareStage(recordStage);
+}
+if(window.ResizeObserver){
+  const stageObserver=new ResizeObserver(()=>requestAnimationFrame(syncStageSquares));
+  stageObserver.observe(document.documentElement);
+  stageObserver.observe(app);
+}
+window.addEventListener("resize",syncStageSquares);
+setTimeout(syncStageSquares,0);
+setTimeout(syncStageSquares,150);
+setTimeout(syncStageSquares,500);
+
 function rememberArtwork(url){
   if(!url){cover.removeAttribute("src");label.style.backgroundImage="";return}
   cover.src=url;cover.style.objectFit="cover";label.style.backgroundImage=`url("${url.replaceAll('"','%22')}")`;
