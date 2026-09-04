@@ -27,14 +27,15 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 #app.normal,#app.jumbo{min-height:100%;overflow:auto}
 .header{
   height:34px;display:flex;align-items:center;justify-content:flex-end;
-  gap:6px;padding:0 1px 6px;
+  gap:6px;padding:0 1px 6px;cursor:move;user-select:none;touch-action:none;
 }
 .brand{font-size:12px;font-weight:700;letter-spacing:.1px}
 .settings-btn{
   width:27px;height:27px;border-radius:50%;background:transparent;color:var(--muted);cursor:pointer;font-size:15px;
+  position:relative;z-index:30;
 }
 .settings-btn:hover{background:#242832;color:#fff}
-.close-hub{width:27px;height:27px;border-radius:50%;background:transparent;color:var(--muted);cursor:pointer;font-size:19px;line-height:1}
+.close-hub{width:27px;height:27px;border-radius:50%;background:transparent;color:var(--muted);cursor:pointer;font-size:19px;line-height:1;position:relative;z-index:30}
 .close-hub:hover{background:#242832;color:#fff}
 
 /* Player */
@@ -373,6 +374,26 @@ function recordLoop(ts){
 }
 
 
+let hubDragActive=false,hubDragX=0,hubDragY=0;
+const dragHeader=document.querySelector(".header");
+if(dragHeader){
+  dragHeader.addEventListener("pointerdown",e=>{
+    if(e.target.closest("button")) return;
+    hubDragActive=true;hubDragX=e.clientX;hubDragY=e.clientY;
+    dragHeader.setPointerCapture?.(e.pointerId);
+    e.preventDefault();
+  });
+  dragHeader.addEventListener("pointermove",e=>{
+    if(!hubDragActive)return;
+    const dx=e.clientX-hubDragX,dy=e.clientY-hubDragY;
+    hubDragX=e.clientX;hubDragY=e.clientY;
+    post("myhub-drag",{dx,dy});
+  });
+  const endDrag=e=>{hubDragActive=false;try{dragHeader.releasePointerCapture?.(e.pointerId)}catch(_){} };
+  dragHeader.addEventListener("pointerup",endDrag);
+  dragHeader.addEventListener("pointercancel",endDrag);
+}
+
 function post(type,extra={}) {
   if(window.parent!==window) window.parent.postMessage({type,...extra},ORIGIN);
 }
@@ -538,7 +559,7 @@ function connect(){
 }
 $("connect").onclick=connect;$("reconnect").onclick=connect;
 $("settingsBtn").onclick=()=>$("settings").classList.remove("hidden");
-$("closeHub").onclick=()=>window.parent.postMessage({type:"myhub-close"},"https://dexxx02348.github.io");
+$("closeHub").onclick=e=>{e.preventDefault();e.stopPropagation();window.top.postMessage({type:"myhub-close"},"https://dexxx02348.github.io")};
 $("closeSettings").onclick=()=>$("settings").classList.add("hidden");
 $("settings").addEventListener("click",e=>{if(e.target===settings)settings.classList.add("hidden")});
 document.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{setMode(b.dataset.mode);setPanels()});
