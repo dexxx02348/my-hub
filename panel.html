@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+      content="width=device-width,initial-scale=1">
 
 <title>My Hub</title>
 
 <style>
+
 * {
   box-sizing: border-box;
 }
@@ -23,13 +28,31 @@ body {
 
 body {
   padding: 10px;
+  overflow-x: hidden;
+}
+
+/* ========================================
+   GENERAL
+======================================== */
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
 }
 
 .card {
   background: #292a2d;
   border: 1px solid #3c4043;
-  border-radius: 11px;
-  padding: 12px;
+  border-radius: 12px;
+  padding: 13px;
   margin-bottom: 10px;
 }
 
@@ -37,31 +60,81 @@ body {
   color: #9aa0a6;
   font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: .65px;
   margin-bottom: 9px;
+}
+
+.status {
+  color: #9aa0a6;
+  font-size: 10px;
+  margin-top: 7px;
+}
+
+/* ========================================
+   TOP BAR
+======================================== */
+
+.topbar {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 7px;
+}
+
+.settings-button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #9aa0a6;
+  font-size: 15px;
+}
+
+.settings-button:hover {
+  background: #35363a;
+  color: #e8eaed;
+}
+
+/* ========================================
+   SPOTIFY PLAYER
+======================================== */
+
+.player-card {
+  position: relative;
 }
 
 .song {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
+}
+
+.art-wrap {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
 }
 
 .art {
-  width: 58px;
-  height: 58px;
-  border-radius: 7px;
+  width: 64px;
+  height: 64px;
+  display: block;
+  border-radius: 8px;
   background: #3c4043;
   object-fit: cover;
-  flex-shrink: 0;
 }
 
 .song-info {
   min-width: 0;
+  flex: 1;
 }
 
 .song-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
@@ -71,10 +144,14 @@ body {
 .artist {
   color: #9aa0a6;
   font-size: 11px;
-  margin-top: 3px;
+  margin-top: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.progress-area {
+  margin-top: 10px;
 }
 
 .range {
@@ -83,75 +160,123 @@ body {
   cursor: pointer;
 }
 
-.progress {
-  margin-top: 9px;
-}
-
 .times {
   display: flex;
   justify-content: space-between;
   color: #9aa0a6;
   font-size: 9px;
+  margin-top: -1px;
 }
 
 .controls {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   gap: 5px;
   margin-top: 8px;
 }
 
-button {
+.control {
+  min-width: 34px;
+  height: 32px;
+  padding: 0 8px;
   border: 0;
   border-radius: 8px;
-  height: 32px;
-  padding: 0 9px;
   background: #35363a;
   color: #e8eaed;
-  cursor: pointer;
+  transition: background .12s, transform .08s;
 }
 
-button:hover {
+.control:hover {
   background: #45464a;
 }
 
+.control:active {
+  transform: scale(.94);
+}
+
 .play {
+  min-width: 48px;
   background: #8ab4f8;
   color: #202124;
-  font-weight: 500;
-  min-width: 48px;
+  font-weight: 600;
 }
 
 .play:hover {
   background: #a8c7fa;
 }
 
-.small-button {
-  font-size: 11px;
-}
-
 .volume {
   margin-top: 8px;
 }
 
-.status {
-  color: #9aa0a6;
+.device {
+  color: #80868b;
+  font-size: 9px;
+  margin-top: 6px;
+  text-align: center;
+}
+
+/* ========================================
+   MICRO HOVER CONTROLS
+======================================== */
+
+.micro-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: rgba(0,0,0,.48);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+
+.art-wrap:hover .micro-overlay {
+  opacity: 1;
+}
+
+.micro-control {
+  width: 23px;
+  height: 23px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(32,33,36,.82);
+  color: white;
   font-size: 10px;
-  margin-top: 7px;
-  min-height: 14px;
 }
 
-.connect-button {
-  width: 100%;
-  background: #8ab4f8;
-  color: #202124;
-  font-weight: 500;
+.micro-control:hover {
+  background: rgba(70,72,76,.95);
 }
 
-.connect-button:hover {
-  background: #a8c7fa;
+.micro-settings {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  z-index: 3;
+  width: 19px;
+  height: 19px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(32,33,36,.82);
+  color: #d4d7da;
+  font-size: 10px;
+  opacity: .85;
 }
+
+.micro-settings:hover {
+  opacity: 1;
+  background: rgba(53,54,58,.95);
+}
+
+/* ========================================
+   QUICK LINKS
+======================================== */
 
 .grid {
   display: grid;
@@ -161,8 +286,22 @@ button:hover {
 
 .link {
   width: 100%;
+  height: 35px;
+  padding: 0 10px;
+  border: 1px solid #3c4043;
+  border-radius: 8px;
+  background: #292a2d;
+  color: #e8eaed;
   text-align: left;
 }
+
+.link:hover {
+  background: #35363a;
+}
+
+/* ========================================
+   GAMES
+======================================== */
 
 .game-area {
   margin-top: 9px;
@@ -181,14 +320,14 @@ button:hover {
 }
 
 .back {
-  font-size: 10px;
   height: 28px;
+  font-size: 10px;
 }
 
 .game-button {
   width: 100%;
-  height: 110px;
-  font-size: 21px;
+  height: 105px;
+  font-size: 20px;
 }
 
 .game-center {
@@ -198,17 +337,17 @@ button:hover {
 
 .score {
   font-size: 28px;
-  margin: 12px 0;
+  margin: 10px 0;
 }
 
 .guess-input {
   width: 100%;
   height: 34px;
+  padding: 0 9px;
   border: 1px solid #3c4043;
   border-radius: 8px;
   background: #202124;
   color: #e8eaed;
-  padding: 0 9px;
   outline: none;
 }
 
@@ -222,50 +361,413 @@ canvas {
   max-width: 280px;
   height: auto;
   margin: 0 auto;
-  background: #202124;
   border: 1px solid #3c4043;
+  border-radius: 9px;
+  background: #202124;
+}
+
+/* ========================================
+   SETTINGS
+======================================== */
+
+.settings-panel {
+  position: absolute;
+  top: 44px;
+  right: 10px;
+  width: 235px;
+  padding: 13px;
+  background: #292a2d;
+  border: 1px solid #4a4d50;
+  border-radius: 11px;
+  box-shadow: 0 8px 25px rgba(0,0,0,.35);
+  z-index: 100;
+}
+
+.settings-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.setting-label {
+  color: #9aa0a6;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 7px;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  margin-bottom: 13px;
+}
+
+.mode-button {
+  height: 32px;
+  border: 1px solid #3c4043;
+  border-radius: 7px;
+  background: #202124;
+  color: #e8eaed;
+  font-size: 11px;
+}
+
+.mode-button:hover {
+  background: #35363a;
+}
+
+.mode-button.active {
+  border-color: #8ab4f8;
+  background: #303b4c;
+  color: #a8c7fa;
+}
+
+.setting-row {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #e8eaed;
+  font-size: 11px;
+}
+
+.switch {
+  position: relative;
+  width: 34px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: #45464a;
+  cursor: pointer;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 3px;
+  top: 3px;
+  border-radius: 50%;
+  background: #9aa0a6;
+  transition: .15s;
+}
+
+.switch input:checked + .slider {
+  background: #6d93c5;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(14px);
+  background: #e8eaed;
+}
+
+.disconnect {
+  width: 100%;
+  height: 32px;
+  margin-top: 9px;
+  background: #35363a;
+  color: #e8eaed;
+  font-size: 11px;
+}
+
+/* ========================================
+   MICRO MODE
+======================================== */
+
+body.micro-mode {
+  padding: 0;
+  background: transparent;
+}
+
+body.micro-mode .topbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 50;
+  width: 25px;
+  height: 25px;
+  margin: 0;
+}
+
+body.micro-mode .settings-button {
+  width: 22px;
+  height: 22px;
+  font-size: 12px;
+}
+
+body.micro-mode .player-card {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+}
+
+body.micro-mode .section,
+body.micro-mode .song-info,
+body.micro-mode .progress-area,
+body.micro-mode .controls,
+body.micro-mode .volume,
+body.micro-mode .device {
+  display: none;
+}
+
+body.micro-mode .song {
+  display: block;
+}
+
+body.micro-mode .art-wrap,
+body.micro-mode .art {
+  width: 100%;
+  height: 100%;
   border-radius: 9px;
 }
 
-.hidden {
-  display: none !important;
+body.micro-mode .micro-settings {
+  display: none;
 }
+
+body.micro-mode .settings-panel {
+  top: 27px;
+  right: 3px;
+}
+
+/* ========================================
+   MINI MODE
+======================================== */
+
+body.mini-mode .quick-section,
+body.mini-mode .games-section,
+body.mini-mode .progress-area,
+body.mini-mode .volume,
+body.mini-mode .device,
+body.mini-mode .settings-button {
+  display: none;
+}
+
+body.mini-mode {
+  padding: 7px;
+}
+
+body.mini-mode .player-card {
+  padding: 7px;
+  margin: 0;
+}
+
+body.mini-mode .song-info {
+  display: none;
+}
+
+body.mini-mode .song {
+  display: flex;
+  justify-content: center;
+}
+
+body.mini-mode .art-wrap,
+body.mini-mode .art {
+  width: 105px;
+  height: 105px;
+}
+
+body.mini-mode .controls {
+  margin-top: 7px;
+}
+
+body.mini-mode .micro-overlay {
+  display: none;
+}
+
+/* ========================================
+   JUMBO MODE
+======================================== */
+
+body.jumbo-mode {
+  padding: 14px;
+}
+
+body.jumbo-mode .player-card {
+  padding: 17px;
+}
+
+body.jumbo-mode .art-wrap,
+body.jumbo-mode .art {
+  width: 135px;
+  height: 135px;
+}
+
+body.jumbo-mode .song {
+  gap: 16px;
+}
+
+body.jumbo-mode .song-name {
+  font-size: 18px;
+}
+
+body.jumbo-mode .artist {
+  font-size: 13px;
+}
+
+body.jumbo-mode .control {
+  height: 39px;
+  min-width: 41px;
+}
+
+body.jumbo-mode .play {
+  min-width: 60px;
+}
+
 </style>
+
 </head>
+
 
 <body>
 
-<!-- =========================
-     SPOTIFY
-========================= -->
 
-<div class="card">
+<!-- ========================================
+     TOP BAR
+======================================== -->
 
-  <div class="section">
-    Spotify
+<div class="topbar">
+
+  <button
+    id="settingsButton"
+    class="settings-button"
+    title="Settings"
+  >
+    ⚙
+  </button>
+
+</div>
+
+
+<!-- ========================================
+     SETTINGS
+======================================== -->
+
+<div
+  id="settingsPanel"
+  class="settings-panel hidden"
+>
+
+  <div class="settings-title">
+    My Hub Settings
   </div>
 
-  <!-- LOGIN -->
-  <div id="connectBox">
+  <div class="setting-label">
+    Display mode
+  </div>
 
-    <div class="status" style="margin-bottom: 9px;">
-      Connect Spotify to control playback.
-    </div>
+  <div class="mode-grid">
 
     <button
-      id="connect"
-      class="connect-button"
+      class="mode-button"
+      data-mode="micro"
     >
-      Connect Spotify
+      Micro
+    </button>
+
+    <button
+      class="mode-button"
+      data-mode="mini"
+    >
+      Mini
+    </button>
+
+    <button
+      class="mode-button"
+      data-mode="normal"
+    >
+      Normal
+    </button>
+
+    <button
+      class="mode-button"
+      data-mode="jumbo"
+    >
+      Jumbo
     </button>
 
   </div>
 
 
-  <!-- PLAYER -->
-  <div id="player" class="hidden">
+  <div class="setting-row">
 
-    <div class="song">
+    <span>
+      Quick links
+    </span>
+
+    <label class="switch">
+
+      <input
+        id="linksToggle"
+        type="checkbox"
+        checked
+      >
+
+      <span class="slider"></span>
+
+    </label>
+
+  </div>
+
+
+  <div class="setting-row">
+
+    <span>
+      Mini games
+    </span>
+
+    <label class="switch">
+
+      <input
+        id="gamesToggle"
+        type="checkbox"
+        checked
+      >
+
+      <span class="slider"></span>
+
+    </label>
+
+  </div>
+
+
+  <button
+    id="disconnect"
+    class="disconnect"
+  >
+    Reconnect Spotify
+  </button>
+
+</div>
+
+
+<!-- ========================================
+     SPOTIFY
+======================================== -->
+
+<div class="card player-card">
+
+  <div class="section">
+    Spotify
+  </div>
+
+
+  <div class="song">
+
+    <div class="art-wrap">
 
       <img
         id="art"
@@ -273,28 +775,75 @@ canvas {
         alt=""
       >
 
-      <div class="song-info">
+      <div class="micro-overlay">
 
-        <div
-          id="song"
-          class="song-name"
+        <button
+          id="microPrev"
+          class="micro-control"
         >
-          Nothing playing
-        </div>
+          ⏮
+        </button>
 
-        <div
-          id="artist"
-          class="artist"
+        <button
+          id="microPlay"
+          class="micro-control"
         >
-          Spotify
-        </div>
+          ▶
+        </button>
+
+        <button
+          id="microNext"
+          class="micro-control"
+        >
+          ⏭
+        </button>
 
       </div>
+
+
+      <button
+        id="microSettings"
+        class="micro-settings"
+        title="Settings"
+      >
+        ⚙
+      </button>
 
     </div>
 
 
-    <div class="progress">
+    <div class="song-info">
+
+      <div
+        id="song"
+        class="song-name"
+      >
+        Nothing playing
+      </div>
+
+      <div
+        id="artist"
+        class="artist"
+      >
+        Spotify
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div
+    id="connectStatus"
+    class="status"
+  >
+    Checking Spotify...
+  </div>
+
+
+  <div id="playerControls">
+
+    <div class="progress-area">
 
       <input
         id="progress"
@@ -324,7 +873,7 @@ canvas {
 
       <button
         id="shuffle"
-        class="small-button"
+        class="control"
         title="Shuffle"
       >
         🔀
@@ -332,35 +881,23 @@ canvas {
 
       <button
         id="previous"
+        class="control"
         title="Previous"
       >
         ⏮
       </button>
 
       <button
-        id="back"
-        title="Back 10 seconds"
-      >
-        −10
-      </button>
-
-      <button
         id="play"
-        class="play"
+        class="control play"
         title="Play / Pause"
       >
         ▶
       </button>
 
       <button
-        id="forward"
-        title="Forward 10 seconds"
-      >
-        +10
-      </button>
-
-      <button
         id="next"
+        class="control"
         title="Next"
       >
         ⏭
@@ -368,7 +905,7 @@ canvas {
 
       <button
         id="repeat"
-        class="small-button"
+        class="control"
         title="Repeat"
       >
         🔁
@@ -392,10 +929,10 @@ canvas {
 
 
     <div
-      id="status"
-      class="status"
+      id="device"
+      class="device"
     >
-      Connected
+      Spotify
     </div>
 
   </div>
@@ -403,11 +940,14 @@ canvas {
 </div>
 
 
-<!-- =========================
+<!-- ========================================
      QUICK LINKS
-========================= -->
+======================================== -->
 
-<div class="card">
+<div
+  id="quickSection"
+  class="card quick-section"
+>
 
   <div class="section">
     Quick Links
@@ -448,15 +988,19 @@ canvas {
 </div>
 
 
-<!-- =========================
+<!-- ========================================
      GAMES
-========================= -->
+======================================== -->
 
-<div class="card">
+<div
+  id="gamesSection"
+  class="card games-section"
+>
 
   <div class="section">
     Mini Games
   </div>
+
 
   <div
     id="gameMenu"
@@ -480,6 +1024,7 @@ canvas {
     </button>
 
   </div>
+
 
   <div
     id="gameArea"
@@ -509,12 +1054,6 @@ const TRUSTED_ORIGIN =
    ELEMENTS
 ===================================================== */
 
-const connectBox =
-  document.getElementById("connectBox");
-
-const player =
-  document.getElementById("player");
-
 const art =
   document.getElementById("art");
 
@@ -536,26 +1075,317 @@ const duration =
 const play =
   document.getElementById("play");
 
-const status =
-  document.getElementById("status");
+const device =
+  document.getElementById("device");
 
 const volume =
   document.getElementById("volume");
 
-const gameMenu =
-  document.getElementById("gameMenu");
+const status =
+  document.getElementById(
+    "connectStatus"
+  );
 
-const gameArea =
-  document.getElementById("gameArea");
+const settingsPanel =
+  document.getElementById(
+    "settingsPanel"
+  );
 
 
 /* =====================================================
-   SPOTIFY AUTH POPUP RESPONSE
+   MODES
+===================================================== */
+
+const validModes = [
+  "micro",
+  "mini",
+  "normal",
+  "jumbo"
+];
+
+let mode =
+  localStorage.getItem(
+    "myhub_mode"
+  ) || "normal";
+
+
+function sendModeToParent(
+  selectedMode
+) {
+
+  if (
+    window.parent &&
+    window.parent !== window
+  ) {
+
+    window.parent.postMessage(
+      {
+        type: "myhub-resize",
+        mode: selectedMode
+      },
+      TRUSTED_ORIGIN
+    );
+
+  }
+
+}
+
+
+function applyMode(
+  selectedMode
+) {
+
+  if (
+    !validModes.includes(
+      selectedMode
+    )
+  ) {
+    selectedMode = "normal";
+  }
+
+  mode = selectedMode;
+
+  document.body.classList.remove(
+    "micro-mode",
+    "mini-mode",
+    "jumbo-mode"
+  );
+
+  if (
+    selectedMode !== "normal"
+  ) {
+
+    document.body.classList.add(
+      selectedMode + "-mode"
+    );
+
+  }
+
+
+  document
+    .querySelectorAll(
+      ".mode-button"
+    )
+    .forEach(
+      button => {
+
+        button.classList.toggle(
+          "active",
+          button.dataset.mode ===
+            selectedMode
+        );
+
+      }
+    );
+
+
+  localStorage.setItem(
+    "myhub_mode",
+    selectedMode
+  );
+
+
+  sendModeToParent(
+    selectedMode
+  );
+
+}
+
+
+document
+  .querySelectorAll(
+    ".mode-button"
+  )
+  .forEach(
+    button => {
+
+      button.onclick = () => {
+
+        applyMode(
+          button.dataset.mode
+        );
+
+      };
+
+    }
+  );
+
+
+/* =====================================================
+   SETTINGS
+===================================================== */
+
+document.getElementById(
+  "settingsButton"
+).onclick = () => {
+
+  settingsPanel.classList.toggle(
+    "hidden"
+  );
+
+};
+
+
+document.getElementById(
+  "microSettings"
+).onclick = event => {
+
+  event.stopPropagation();
+
+  settingsPanel.classList.toggle(
+    "hidden"
+  );
+
+};
+
+
+document.addEventListener(
+  "click",
+  event => {
+
+    if (
+      settingsPanel.classList.contains(
+        "hidden"
+      )
+    ) {
+      return;
+    }
+
+    if (
+      settingsPanel.contains(
+        event.target
+      )
+    ) {
+      return;
+    }
+
+    if (
+      event.target.id ===
+      "settingsButton"
+    ) {
+      return;
+    }
+
+    settingsPanel.classList.add(
+      "hidden"
+    );
+
+  }
+);
+
+
+/* =====================================================
+   SHOW / HIDE OPTIONS
+===================================================== */
+
+const linksToggle =
+  document.getElementById(
+    "linksToggle"
+  );
+
+const gamesToggle =
+  document.getElementById(
+    "gamesToggle"
+  );
+
+
+linksToggle.checked =
+  localStorage.getItem(
+    "myhub_links"
+  ) !== "false";
+
+
+gamesToggle.checked =
+  localStorage.getItem(
+    "myhub_games"
+  ) !== "false";
+
+
+function updateVisibility() {
+
+  document.getElementById(
+    "quickSection"
+  ).classList.toggle(
+    "hidden",
+    !linksToggle.checked
+  );
+
+
+  document.getElementById(
+    "gamesSection"
+  ).classList.toggle(
+    "hidden",
+    !gamesToggle.checked
+  );
+
+}
+
+
+linksToggle.onchange =
+() => {
+
+  localStorage.setItem(
+    "myhub_links",
+    linksToggle.checked
+  );
+
+  updateVisibility();
+
+};
+
+
+gamesToggle.onchange =
+() => {
+
+  localStorage.setItem(
+    "myhub_games",
+    gamesToggle.checked
+  );
+
+  updateVisibility();
+
+};
+
+
+updateVisibility();
+
+
+/* =====================================================
+   SPOTIFY AUTH POPUP
+===================================================== */
+
+document.getElementById(
+  "disconnect"
+).onclick = () => {
+
+  localStorage.removeItem(
+    "spotify_access_token"
+  );
+
+  localStorage.removeItem(
+    "spotify_refresh_token"
+  );
+
+  localStorage.removeItem(
+    "spotify_expires_at"
+  );
+
+  window.open(
+    AUTH_URL,
+    "myhubSpotifyAuth",
+    "width=500,height=700"
+  );
+
+};
+
+
+/* =====================================================
+   RECEIVE TOKEN
 ===================================================== */
 
 window.addEventListener(
   "message",
-  async (event) => {
+  async event => {
 
     if (
       event.origin !==
@@ -564,6 +1394,7 @@ window.addEventListener(
       return;
     }
 
+
     if (
       event.data?.type !==
       "myhub-spotify-connected"
@@ -571,16 +1402,19 @@ window.addEventListener(
       return;
     }
 
+
     if (
       !event.data.access_token
     ) {
       return;
     }
 
+
     localStorage.setItem(
       "spotify_access_token",
       event.data.access_token
     );
+
 
     if (
       event.data.refresh_token
@@ -593,6 +1427,7 @@ window.addEventListener(
 
     }
 
+
     localStorage.setItem(
       "spotify_expires_at",
       String(
@@ -600,13 +1435,10 @@ window.addEventListener(
       )
     );
 
-    connectBox.classList.add(
-      "hidden"
-    );
 
-    player.classList.remove(
-      "hidden"
-    );
+    status.textContent =
+      "Spotify connected";
+
 
     await updatePlayback();
 
@@ -615,32 +1447,7 @@ window.addEventListener(
 
 
 /* =====================================================
-   CONNECT BUTTON
-===================================================== */
-
-document
-  .getElementById("connect")
-  .onclick = () => {
-
-    const popup =
-      window.open(
-        AUTH_URL,
-        "myhubSpotifyAuth",
-        "width=500,height=700"
-      );
-
-    if (!popup) {
-
-      status.textContent =
-        "Popup blocked. Allow popups for GitHub Pages.";
-
-    }
-
-  };
-
-
-/* =====================================================
-   REFRESH TOKEN
+   TOKEN
 ===================================================== */
 
 async function refreshToken() {
@@ -649,6 +1456,7 @@ async function refreshToken() {
     localStorage.getItem(
       "spotify_refresh_token"
     );
+
 
   if (!refresh) {
 
@@ -701,18 +1509,6 @@ async function refreshToken() {
 
   if (!response.ok) {
 
-    localStorage.removeItem(
-      "spotify_access_token"
-    );
-
-    localStorage.removeItem(
-      "spotify_refresh_token"
-    );
-
-    localStorage.removeItem(
-      "spotify_expires_at"
-    );
-
     throw new Error(
       data.error_description ||
       "Spotify login expired."
@@ -727,7 +1523,9 @@ async function refreshToken() {
   );
 
 
-  if (data.refresh_token) {
+  if (
+    data.refresh_token
+  ) {
 
     localStorage.setItem(
       "spotify_refresh_token",
@@ -752,7 +1550,7 @@ async function refreshToken() {
 
 
 /* =====================================================
-   GET TOKEN
+   TOKEN GETTER
 ===================================================== */
 
 async function getToken() {
@@ -761,6 +1559,7 @@ async function getToken() {
     localStorage.getItem(
       "spotify_access_token"
     );
+
 
   const expires =
     Number(
@@ -787,7 +1586,7 @@ async function getToken() {
 
 
 /* =====================================================
-   SPOTIFY API REQUEST
+   SPOTIFY REQUEST
 ===================================================== */
 
 async function spotify(
@@ -821,11 +1620,8 @@ async function spotify(
     );
 
 
-  /* Token expired */
-
   if (
-    response.status ===
-      401 &&
+    response.status === 401 &&
     retry
   ) {
 
@@ -892,46 +1688,39 @@ async function spotify(
 
 
 /* =====================================================
-   TIME FORMAT
+   PLAYBACK
 ===================================================== */
+
+let playback = null;
+
 
 function formatTime(ms) {
 
-  const totalSeconds =
+  const seconds =
     Math.floor(ms / 1000);
 
   const minutes =
     Math.floor(
-      totalSeconds / 60
+      seconds / 60
     );
 
-  const seconds =
+  const remaining =
     String(
-      totalSeconds % 60
-    ).padStart(2, "0");
+      seconds % 60
+    ).padStart(
+      2,
+      "0"
+    );
 
 
   return (
     minutes +
     ":" +
-    seconds
+    remaining
   );
 
 }
 
-
-/* =====================================================
-   PLAYBACK STATE
-===================================================== */
-
-let playback = null;
-
-let progressTimer = null;
-
-
-/* =====================================================
-   UPDATE PLAYER
-===================================================== */
 
 async function updatePlayback() {
 
@@ -963,6 +1752,9 @@ async function updatePlayback() {
 
       status.textContent =
         "Connected";
+
+      device.textContent =
+        "Spotify";
 
       return;
 
@@ -1004,17 +1796,10 @@ async function updatePlayback() {
       item.duration_ms ||
       0;
 
+
     const position =
       playback.progress_ms ||
       0;
-
-
-    current.textContent =
-      formatTime(position);
-
-
-    duration.textContent =
-      formatTime(total);
 
 
     progress.value =
@@ -1026,23 +1811,43 @@ async function updatePlayback() {
         : 0;
 
 
+    current.textContent =
+      formatTime(position);
+
+
+    duration.textContent =
+      formatTime(total);
+
+
     play.textContent =
       playback.is_playing
         ? "⏸"
         : "▶";
 
 
+    document.getElementById(
+      "microPlay"
+    ).textContent =
+      playback.is_playing
+        ? "⏸"
+        : "▶";
+
+
     volume.value =
-      playback.device?.volume_percent ??
+      playback.device
+        ?.volume_percent ??
       50;
 
 
-    status.textContent =
+    device.textContent =
       playback.device
-        ? "Device: " +
+        ? "Playing on " +
           playback.device.name
-        : "Connected";
+        : "Spotify";
 
+
+    status.textContent =
+      "Connected";
 
   } catch (error) {
 
@@ -1058,8 +1863,7 @@ async function updatePlayback() {
    PLAY / PAUSE
 ===================================================== */
 
-play.onclick =
-async () => {
+async function togglePlay() {
 
   try {
 
@@ -1095,17 +1899,24 @@ async () => {
 
   }
 
-};
+}
+
+
+play.onclick =
+  togglePlay;
+
+
+document.getElementById(
+  "microPlay"
+).onclick =
+  togglePlay;
 
 
 /* =====================================================
    PREVIOUS
 ===================================================== */
 
-document.getElementById(
-  "previous"
-).onclick =
-async () => {
+async function previousTrack() {
 
   try {
 
@@ -1116,9 +1927,10 @@ async () => {
       }
     );
 
+
     setTimeout(
       updatePlayback,
-      500
+      450
     );
 
   } catch (error) {
@@ -1128,17 +1940,26 @@ async () => {
 
   }
 
-};
+}
+
+
+document.getElementById(
+  "previous"
+).onclick =
+  previousTrack;
+
+
+document.getElementById(
+  "microPrev"
+).onclick =
+  previousTrack;
 
 
 /* =====================================================
    NEXT
 ===================================================== */
 
-document.getElementById(
-  "next"
-).onclick =
-async () => {
+async function nextTrack() {
 
   try {
 
@@ -1149,9 +1970,10 @@ async () => {
       }
     );
 
+
     setTimeout(
       updatePlayback,
-      500
+      450
     );
 
   } catch (error) {
@@ -1161,105 +1983,23 @@ async () => {
 
   }
 
-};
+}
 
-
-/* =====================================================
-   BACK 10
-===================================================== */
 
 document.getElementById(
-  "back"
+  "next"
 ).onclick =
-async () => {
+  nextTrack;
 
-  if (
-    !playback?.item
-  ) {
-    return;
-  }
-
-
-  try {
-
-    const position =
-      Math.max(
-        0,
-        (playback.progress_ms || 0)
-          - 10000
-      );
-
-
-    await spotify(
-      "/me/player/seek?position_ms=" +
-      position,
-      {
-        method: "PUT"
-      }
-    );
-
-
-    await updatePlayback();
-
-  } catch (error) {
-
-    status.textContent =
-      error.message;
-
-  }
-
-};
-
-
-/* =====================================================
-   FORWARD 10
-===================================================== */
 
 document.getElementById(
-  "forward"
+  "microNext"
 ).onclick =
-async () => {
-
-  if (
-    !playback?.item
-  ) {
-    return;
-  }
-
-
-  try {
-
-    const position =
-      Math.min(
-        playback.item.duration_ms,
-        (playback.progress_ms || 0)
-          + 10000
-      );
-
-
-    await spotify(
-      "/me/player/seek?position_ms=" +
-      position,
-      {
-        method: "PUT"
-      }
-    );
-
-
-    await updatePlayback();
-
-  } catch (error) {
-
-    status.textContent =
-      error.message;
-
-  }
-
-};
+  nextTrack;
 
 
 /* =====================================================
-   PROGRESS BAR
+   SEEK BAR
 ===================================================== */
 
 progress.onchange =
@@ -1348,13 +2088,9 @@ async () => {
 
   try {
 
-    const newState =
-      !playback.shuffle_state;
-
-
     await spotify(
       "/me/player/shuffle?state=" +
-      newState,
+      !playback.shuffle_state,
       {
         method: "PUT"
       }
@@ -1362,8 +2098,7 @@ async () => {
 
 
     playback.shuffle_state =
-      newState;
-
+      !playback.shuffle_state;
 
   } catch (error) {
 
@@ -1420,7 +2155,6 @@ async () => {
           ? "🔁"
           : "↪";
 
-
   } catch (error) {
 
     status.textContent =
@@ -1429,60 +2163,6 @@ async () => {
   }
 
 };
-
-
-/* =====================================================
-   PROGRESS ANIMATION
-===================================================== */
-
-progressTimer =
-  setInterval(
-    () => {
-
-      if (
-        !playback ||
-        !playback.item ||
-        !playback.is_playing
-      ) {
-        return;
-      }
-
-
-      playback.progress_ms =
-        Math.min(
-          playback.item.duration_ms,
-          (playback.progress_ms || 0)
-            + 1000
-        );
-
-
-      current.textContent =
-        formatTime(
-          playback.progress_ms
-        );
-
-
-      progress.value =
-        playback.item.duration_ms
-          ? (
-              playback.progress_ms /
-              playback.item.duration_ms
-            ) * 1000
-          : 0;
-
-    },
-    1000
-  );
-
-
-/* =====================================================
-   REFRESH SONG INFO
-===================================================== */
-
-setInterval(
-  updatePlayback,
-  4000
-);
 
 
 /* =====================================================
@@ -1511,6 +2191,17 @@ document
 /* =====================================================
    GAMES
 ===================================================== */
+
+const gameMenu =
+  document.getElementById(
+    "gameMenu"
+  );
+
+const gameArea =
+  document.getElementById(
+    "gameArea"
+  );
+
 
 function showGame(
   html
@@ -1551,6 +2242,7 @@ function gameHeader(
 ) {
 
   return `
+
     <div class="game-header">
 
       <div class="game-title">
@@ -1565,14 +2257,13 @@ function gameHeader(
       </button>
 
     </div>
+
   `;
 
 }
 
 
-/* =====================================================
-   CLICKER
-===================================================== */
+/* Clicker */
 
 document.getElementById(
   "clicker"
@@ -1585,7 +2276,9 @@ document.getElementById(
       "Clicker"
     )}
 
-    <div class="game-center">
+    <div
+      class="game-center"
+    >
 
       <div
         class="score"
@@ -1596,7 +2289,12 @@ document.getElementById(
 
       <button
         id="clickTarget"
-        class="connect-button"
+        style="
+          width:100%;
+          background:#8ab4f8;
+          color:#202124;
+          font-weight:500;
+        "
       >
         CLICK
       </button>
@@ -1632,9 +2330,7 @@ document.getElementById(
 };
 
 
-/* =====================================================
-   NUMBER GUESS
-===================================================== */
+/* Guess */
 
 document.getElementById(
   "guess"
@@ -1666,8 +2362,13 @@ document.getElementById(
 
       <button
         id="guessButton"
-        class="connect-button"
-        style="margin-top:7px"
+        style="
+          width:100%;
+          margin-top:7px;
+          background:#8ab4f8;
+          color:#202124;
+          font-weight:500;
+        "
       >
         Guess
       </button>
@@ -1749,9 +2450,7 @@ document.getElementById(
 };
 
 
-/* =====================================================
-   REACTION
-===================================================== */
+/* Reaction */
 
 document.getElementById(
   "reaction"
@@ -1792,7 +2491,6 @@ document.getElementById(
       "reactionButton"
     );
 
-
   const result =
     document.getElementById(
       "reactionResult"
@@ -1801,7 +2499,7 @@ document.getElementById(
 
   let ready = false;
 
-  let started = 0;
+  let start = 0;
 
 
   const timer =
@@ -1810,7 +2508,7 @@ document.getElementById(
 
         ready = true;
 
-        started =
+        start =
           performance.now();
 
         button.textContent =
@@ -1846,14 +2544,12 @@ document.getElementById(
       const time =
         Math.round(
           performance.now() -
-          started
+          start
         );
 
 
       button.textContent =
-        time +
-        " ms";
-
+        time + " ms";
 
       result.textContent =
         "Nice reaction!";
@@ -1863,9 +2559,7 @@ document.getElementById(
 };
 
 
-/* =====================================================
-   SNAKE
-===================================================== */
+/* Snake */
 
 document.getElementById(
   "snake"
@@ -1898,7 +2592,7 @@ document.getElementById(
     <div
       id="snakeScore"
       class="status"
-      style="text-align:center;"
+      style="text-align:center"
     >
       Score: 0
     </div>
@@ -1923,35 +2617,20 @@ document.getElementById(
     );
 
 
-  const cell =
-    14;
-
-  const size =
-    20;
+  const cell = 14;
+  const size = 20;
 
 
-  let snakeBody = [
+  let body = [
 
-    {
-      x: 10,
-      y: 10
-    },
-
-    {
-      x: 9,
-      y: 10
-    },
-
-    {
-      x: 8,
-      y: 10
-    }
+    {x:10,y:10},
+    {x:9,y:10},
+    {x:8,y:10}
 
   ];
 
 
   let dx = 1;
-
   let dy = 0;
 
   let score = 0;
@@ -1963,14 +2642,12 @@ document.getElementById(
 
     x:
       Math.floor(
-        Math.random() *
-        size
+        Math.random() * size
       ),
 
     y:
       Math.floor(
-        Math.random() *
-        size
+        Math.random() * size
       )
 
   };
@@ -1990,19 +2667,14 @@ document.getElementById(
       "#8ab4f8";
 
 
-    snakeBody.forEach(
+    body.forEach(
       part => {
 
         ctx.fillRect(
-
           part.x * cell,
-
           part.y * cell,
-
           cell - 1,
-
           cell - 1
-
         );
 
       }
@@ -2014,15 +2686,10 @@ document.getElementById(
 
 
     ctx.fillRect(
-
       food.x * cell,
-
       food.y * cell,
-
       cell - 1,
-
       cell - 1
-
     );
 
   }
@@ -2030,20 +2697,17 @@ document.getElementById(
 
   function tick() {
 
-    if (!running) {
+    if (!running)
       return;
-    }
 
 
     const head = {
 
       x:
-        snakeBody[0].x +
-        dx,
+        body[0].x + dx,
 
       y:
-        snakeBody[0].y +
-        dy
+        body[0].y + dy
 
     };
 
@@ -2051,23 +2715,19 @@ document.getElementById(
     if (
 
       head.x < 0 ||
-
       head.x >= size ||
-
       head.y < 0 ||
-
       head.y >= size ||
 
-      snakeBody.some(
-        part =>
-          part.x === head.x &&
-          part.y === head.y
+      body.some(
+        p =>
+          p.x === head.x &&
+          p.y === head.y
       )
 
     ) {
 
       running = false;
-
 
       document.getElementById(
         "snakeScore"
@@ -2075,23 +2735,19 @@ document.getElementById(
         "Game over — Score: " +
         score;
 
-
       return;
 
     }
 
 
-    snakeBody.unshift(
+    body.unshift(
       head
     );
 
 
     if (
-
       head.x === food.x &&
-
       head.y === food.y
-
     ) {
 
       score++;
@@ -2110,32 +2766,28 @@ document.getElementById(
 
           x:
             Math.floor(
-              Math.random() *
-              size
+              Math.random() * size
             ),
 
           y:
             Math.floor(
-              Math.random() *
-              size
+              Math.random() * size
             )
 
         };
 
       } while (
-
-        snakeBody.some(
-          part =>
-            part.x === food.x &&
-            part.y === food.y
+        body.some(
+          p =>
+            p.x === food.x &&
+            p.y === food.y
         )
-
       );
 
 
     } else {
 
-      snakeBody.pop();
+      body.pop();
 
     }
 
@@ -2151,75 +2803,53 @@ document.getElementById(
   }
 
 
-  const keyHandler =
+  window.onkeydown =
     event => {
 
       if (
-
-        event.key ===
-          "ArrowUp" &&
+        event.key === "ArrowUp" &&
         dy !== 1
-
       ) {
 
         dx = 0;
-
         dy = -1;
 
       }
 
 
       if (
-
-        event.key ===
-          "ArrowDown" &&
+        event.key === "ArrowDown" &&
         dy !== -1
-
       ) {
 
         dx = 0;
-
         dy = 1;
 
       }
 
 
       if (
-
-        event.key ===
-          "ArrowLeft" &&
+        event.key === "ArrowLeft" &&
         dx !== 1
-
       ) {
 
         dx = -1;
-
         dy = 0;
 
       }
 
 
       if (
-
-        event.key ===
-          "ArrowRight" &&
+        event.key === "ArrowRight" &&
         dx !== -1
-
       ) {
 
         dx = 1;
-
         dy = 0;
 
       }
 
     };
-
-
-  window.addEventListener(
-    "keydown",
-    keyHandler
-  );
 
 
   draw();
@@ -2233,6 +2863,13 @@ document.getElementById(
    INITIALIZE
 ===================================================== */
 
+applyMode(
+  mode
+);
+
+updateVisibility();
+
+
 const existingToken =
   localStorage.getItem(
     "spotify_access_token"
@@ -2241,17 +2878,18 @@ const existingToken =
 
 if (existingToken) {
 
-  connectBox.classList.add(
-    "hidden"
-  );
-
-  player.classList.remove(
-    "hidden"
-  );
+  status.textContent =
+    "Connected";
 
   updatePlayback();
 
+} else {
+
+  status.textContent =
+    "Not connected — click Connect in settings.";
+
 }
+
 
 </script>
 
