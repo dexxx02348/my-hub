@@ -184,7 +184,6 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;bac
 #app.normal .settings-btn,#app.normal .close-hub,#app.jumbo .settings-btn,#app.jumbo .close-hub{background:rgba(8,10,13,.55);backdrop-filter:blur(8px);color:#fff}
 
 /* Jumbo */
-#app.jumbo{padding:14px}
 #app.jumbo .player-grid{grid-template-columns:minmax(0,1.15fr) minmax(210px,.85fr);align-items:center}
 
 #app.jumbo .info{text-align:left}
@@ -394,6 +393,7 @@ let style=localStorage.getItem("myhub_style")==="record"?"record":"cover";
 let linksOn=localStorage.getItem("myhub_links")!=="false";
 let gamesOn=localStorage.getItem("myhub_games")!=="false";
 let siteThemeOn=localStorage.getItem("myhub_site_theme")==="true";
+let siteColors=null;
 let theme=localStorage.getItem("myhub_theme")||"midnight";
 let playback=null,lastRefresh=0,draggingSeek=false;
 let recordAngle=0,recordVelocity=0,recordLastFrame=0,recordRAF=0;
@@ -434,7 +434,7 @@ if(dragHeader){
 }
 
 function post(type,extra={}) {
-  if(window.parent!==window) window.parent.postMessage({type,...extra},ORIGIN);
+  if(window.parent!==window) window.parent.postMessage({type,...extra},"*");
 }
 function fmt(ms){
   const s=Math.max(0,Math.floor((ms||0)/1000));
@@ -467,17 +467,13 @@ function applyTheme(){
   app.classList.add("theme-"+(theme||"midnight"));
   document.querySelectorAll("[data-theme]").forEach(b=>b.classList.toggle("active",b.dataset.theme===theme));
   $("siteThemeToggle").checked=siteThemeOn;
-  if(siteThemeOn){
-    const root=getComputedStyle(document.documentElement);
-    app.style.setProperty("--bg",root.getPropertyValue("--site-bg")||root.getPropertyValue("--bg"));
-    app.style.setProperty("--card",root.getPropertyValue("--site-card")||root.getPropertyValue("--card"));
-    app.style.setProperty("--card2",root.getPropertyValue("--site-card2")||root.getPropertyValue("--card2"));
-    app.style.setProperty("--line",root.getPropertyValue("--site-line")||root.getPropertyValue("--line"));
-    app.style.setProperty("--text",root.getPropertyValue("--site-text")||root.getPropertyValue("--text"));
-    app.style.setProperty("--muted",root.getPropertyValue("--site-muted")||root.getPropertyValue("--muted"));
-    app.style.setProperty("--accent",root.getPropertyValue("--site-accent")||root.getPropertyValue("--accent"));
-  }else ["bg","card","card2","line","text","muted","accent"].forEach(k=>app.style.removeProperty("--"+k));
+  if(siteThemeOn && siteColors){
+    Object.entries(siteColors).forEach(([k,v])=>{if(v)app.style.setProperty("--"+k,v)});
+  }else{
+    ["bg","card","card2","line","text","muted","accent"].forEach(k=>app.style.removeProperty("--"+k));
+  }
 }
+function receiveSiteTheme(colors){if(colors){siteColors=colors;applyTheme()}}
 function setTheme(next){theme=["midnight","ocean","forest","sunset","purple"].includes(next)?next:"midnight";localStorage.setItem("myhub_theme",theme);applyTheme()}
 
 function setPanels(){
@@ -616,19 +612,20 @@ function connect(){
 }
 $("connect").onclick=connect;$("reconnect").onclick=connect;
 $("settingsBtn").onclick=()=>$("settings").classList.remove("hidden");
-$("closeHub").onclick=e=>{e.preventDefault();e.stopPropagation();window.top.postMessage({type:"myhub-close"},"https://dexxx02348.github.io")};
+$("closeHub").onclick=e=>{e.preventDefault();e.stopPropagation();post("myhub-close");};
 $("closeSettings").onclick=()=>$("settings").classList.add("hidden");
 $("settings").addEventListener("click",e=>{if(e.target===settings)settings.classList.add("hidden")});
 document.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{setMode(b.dataset.mode);setPanels()});
 document.querySelectorAll("[data-style]").forEach(b=>b.onclick=()=>setStyle(b.dataset.style));
 document.querySelectorAll("[data-speed]").forEach(b=>b.onclick=()=>setRecordSpeed(b.dataset.speed));
 document.querySelectorAll("[data-theme]").forEach(b=>b.onclick=()=>setTheme(b.dataset.theme));
-$("siteThemeToggle").onchange=()=>{siteThemeOn=$("siteThemeToggle").checked;localStorage.setItem("myhub_site_theme",String(siteThemeOn));applyTheme()};
+$("siteThemeToggle").onchange=()=>{siteThemeOn=$("siteThemeToggle").checked;localStorage.setItem("myhub_site_theme",String(siteThemeOn));applyTheme();if(siteThemeOn)post("myhub-request-site-theme")};
 $("linksToggle").onchange=()=>{linksOn=$("linksToggle").checked;localStorage.setItem("myhub_links",String(linksOn));setPanels()};
 $("gamesToggle").onchange=()=>{gamesOn=$("gamesToggle").checked;localStorage.setItem("myhub_games",String(gamesOn));setPanels()};
 document.querySelectorAll(".link").forEach(b=>b.onclick=()=>window.open(b.dataset.url,"_blank","noopener,noreferrer"));
 
 window.addEventListener("message",e=>{
+  if(e.source===window.parent && e.data?.type==="myhub-site-theme"){receiveSiteTheme(e.data.colors);return}
   if(e.origin!==ORIGIN)return;
   if(e.data?.type==="spotify-auth-success" || e.data?.type==="spotify-auth-error") sync();
 });
@@ -667,6 +664,7 @@ setMode(mode,false);setStyle(style);setRecordSpeed(recordSpeed);applyTheme();set
 window.addEventListener("keydown",e=>{if(e.key==="Escape")settings.classList.add("hidden")});
 window.addEventListener("beforeunload",()=>{});
 post("myhub-ready",{mode,width:MODES[mode].w,height:MODES[mode].h});
+if(siteThemeOn)post("myhub-request-site-theme");
 sync();
 setInterval(()=>{if(!document.hidden)sync()},5000);
 })();
