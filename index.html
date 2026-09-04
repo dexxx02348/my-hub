@@ -1,18 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Hub Spotify Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Hub Spotify</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #202124;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .box {
+      background: #292a2d;
+      border: 1px solid #3c4043;
+      border-radius: 16px;
+      padding: 30px;
+      width: 320px;
+      text-align: center;
+    }
+
+    button {
+      background: #8ab4f8;
+      color: #202124;
+      border: 0;
+      border-radius: 9px;
+      padding: 12px 18px;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    button:hover {
+      background: #a8c7fa;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>My Hub</h1>
-  <button id="login">Connect Spotify</button>
+
+  <div class="box">
+    <h1>My Hub</h1>
+    <p>Connect your Spotify account.</p>
+    <button id="login">Connect Spotify</button>
+  </div>
 
   <script>
+    const CLIENT_ID = "d3445d44d1314d07b1d7a7904bbe5a48";
+
+    const REDIRECT_URI =
+      "https://dexxx02348.github.io/my-hub/";
+
+    const SCOPES = [
+      "user-read-playback-state",
+      "user-modify-playback-state",
+      "user-read-currently-playing"
+    ].join(" ");
+
     document.getElementById("login").onclick = () => {
-      alert("Spotify connection will go here.");
+
+      const params = new URLSearchParams({
+        client_id: CLIENT_ID,
+        response_type: "code",
+        redirect_uri: REDIRECT_URI,
+        scope: SCOPES
+      });
+
+      window.location.href =
+        "https://accounts.spotify.com/authorize?" +
+        params.toString();
     };
   </script>
+
 </body>
 </html>
