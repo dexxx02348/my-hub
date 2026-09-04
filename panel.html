@@ -26,14 +26,16 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 #app.mini{min-height:100%;padding:7px;overflow:hidden}
 #app.normal,#app.jumbo{min-height:100%;overflow:auto}
 .header{
-  height:34px;display:flex;align-items:center;justify-content:space-between;
-  padding:0 1px 6px;
+  height:34px;display:flex;align-items:center;justify-content:flex-end;
+  gap:6px;padding:0 1px 6px;
 }
 .brand{font-size:12px;font-weight:700;letter-spacing:.1px}
 .settings-btn{
   width:27px;height:27px;border-radius:50%;background:transparent;color:var(--muted);cursor:pointer;font-size:15px;
 }
 .settings-btn:hover{background:#242832;color:#fff}
+.close-hub{width:27px;height:27px;border-radius:50%;background:transparent;color:var(--muted);cursor:pointer;font-size:19px;line-height:1}
+.close-hub:hover{background:#242832;color:#fff}
 
 /* Player */
 .player{
@@ -99,9 +101,11 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;bac
 #record{will-change:transform;transform-origin:50% 50%;}
 
 /* Mini */
-#app.mini .header{height:22px;padding:0;justify-content:flex-end}
+#app.mini .header{height:22px;padding:0;justify-content:flex-end;gap:3px}
 #app.mini .brand{display:none}
-#app.mini .settings-btn{position:absolute;top:5px;right:5px;z-index:20;background:rgba(10,12,16,.72);backdrop-filter:blur(6px)}
+#app.mini .settings-btn,#app.mini .close-hub{position:relative;z-index:20;background:rgba(10,12,16,.72);backdrop-filter:blur(6px)}
+#app.mini .settings-btn{width:25px;height:25px}
+#app.mini .close-hub{width:25px;height:25px;font-size:18px}
 #app.mini .player{height:calc(100vh - 14px);padding:7px;border-radius:13px}
 #app.mini .player-grid{height:100%;gap:6px}
 #app.mini .cover-stage,#app.mini .record-stage{
@@ -130,9 +134,10 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;bac
 
 /* Micro */
 #app.micro{position:relative;background:transparent}
-#app.micro .header{position:absolute;right:4px;top:4px;width:27px;height:27px;padding:0;z-index:20}
+#app.micro .header{position:absolute;right:4px;top:4px;width:auto;height:27px;padding:0;z-index:20;display:flex;gap:2px}
 #app.micro .brand{display:none}
-#app.micro .settings-btn{width:25px;height:25px;background:rgba(8,10,13,.68);backdrop-filter:blur(6px);color:#fff}
+#app.micro .settings-btn,#app.micro .close-hub{width:25px;height:25px;background:rgba(8,10,13,.68);backdrop-filter:blur(6px);color:#fff}
+#app.micro .close-hub{font-size:18px}
 #app.micro .player{
   width:100%;height:100%;padding:0;border:0;border-radius:0;background:transparent;
 }
@@ -219,6 +224,7 @@ input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;bac
 <div id="app" class="normal">
   <div class="header">
     <button id="settingsBtn" class="settings-btn" aria-label="Settings">⚙</button>
+    <button id="closeHub" class="close-hub" aria-label="Close My Hub">×</button>
   </div>
 
   <main class="player">
@@ -532,6 +538,7 @@ function connect(){
 }
 $("connect").onclick=connect;$("reconnect").onclick=connect;
 $("settingsBtn").onclick=()=>$("settings").classList.remove("hidden");
+$("closeHub").onclick=()=>window.parent.postMessage({type:"myhub-close"},"https://dexxx02348.github.io");
 $("closeSettings").onclick=()=>$("settings").classList.add("hidden");
 $("settings").addEventListener("click",e=>{if(e.target===settings)settings.classList.add("hidden")});
 document.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{setMode(b.dataset.mode);setPanels()});
