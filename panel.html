@@ -5,422 +5,493 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>My Hub</title>
 <style>
+:root{
+  --bg:#0e1014;--card:#171a20;--card2:#1d2128;--line:#2b3039;
+  --text:#f3f5f7;--muted:#9199a5;--accent:#8ab4ff;--good:#6ee7a4;
+}
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;min-width:0;min-height:0}
-body{font-family:Arial,Roboto,sans-serif;background:#202124;color:#e8eaed;padding:10px;overflow:auto}
-button,input{font:inherit}button{cursor:pointer}.hidden{display:none!important}
-:root{--bg:#202124;--card:#292a2d;--border:#3c4043;--muted:#9aa0a6;--accent:#8ab4f8}
+html,body{width:100%;height:100%;margin:0;min-width:0;min-height:0}
+body{
+  color:var(--text);background:var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  overflow:auto;-webkit-font-smoothing:antialiased;
+}
+button,input{font:inherit}
+button{border:0;color:inherit}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hidden{display:none!important}
 
-.topbar{height:28px;display:flex;justify-content:flex-end;align-items:center;margin-bottom:6px}
-.settings-button,.micro-settings{border:0;border-radius:50%;background:transparent;color:#9aa0a6}
-.settings-button{width:27px;height:27px;font-size:14px}
-.settings-button:hover{background:#35363a;color:#fff}
+/* Layout */
+#app{width:100%;min-height:100%;padding:10px}
+#app.micro{height:100%;padding:0;overflow:hidden}
+#app.mini{min-height:100%;padding:7px;overflow:hidden}
+#app.normal,#app.jumbo{min-height:100%;overflow:auto}
+.header{
+  height:34px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 1px 6px;
+}
+.brand{font-size:12px;font-weight:700;letter-spacing:.1px}
+.settings-btn{
+  width:27px;height:27px;border-radius:50%;background:transparent;color:var(--muted);cursor:pointer;font-size:15px;
+}
+.settings-btn:hover{background:#242832;color:#fff}
 
-.card{width:100%;min-width:0;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:9px}
-.section{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:9px}
-.status{color:var(--muted);font-size:10px;line-height:1.4;margin-top:7px;min-height:14px}
+/* Player */
+.player{
+  position:relative;background:var(--card);border:1px solid var(--line);border-radius:15px;
+  width:100%;min-width:0;padding:12px;
+}
+.player-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.cover-stage{
+  width:min(100%,290px);margin:0 auto;aspect-ratio:1/1;position:relative;min-width:0;
+}
+.cover{
+  display:block;width:100%;height:100%;object-fit:cover;border-radius:13px;background:#222733;
+}
+.info{min-width:0;text-align:left}
+.title{font-size:16px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.artist{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.progress{width:100%;margin-top:12px}
+input[type=range]{width:100%;margin:0;accent-color:var(--accent)}
+.times{display:flex;justify-content:space-between;color:var(--muted);font-size:9px;margin-top:3px}
+.controls{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:9px}
+.ctrl{
+  width:34px;height:34px;border-radius:10px;background:var(--card2);cursor:pointer;font-size:13px;
+}
+.ctrl:hover{background:#282e38}.ctrl.main{width:44px;height:38px;border-radius:12px;background:var(--text);color:#101216;font-weight:800;font-size:15px}
+.secondary-controls{display:flex;justify-content:center;gap:6px;margin-top:7px}
+.volume{margin-top:9px}
+.status{text-align:center;color:var(--muted);font-size:9px;min-height:13px;margin-top:7px}
+.connect{
+  width:100%;height:33px;border-radius:9px;background:var(--accent);color:#111;font-weight:750;cursor:pointer;margin-top:8px
+}
+.connect:hover{filter:brightness(1.05)}
+.device{text-align:center;color:var(--muted);font-size:9px;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-.player-card{position:relative}
-.song{width:100%;min-width:0;display:flex;align-items:center;gap:10px}
-.art-wrap,.record-wrap{position:relative;width:64px;height:64px;min-width:0;flex:0 0 64px}
-.art{display:block;width:100%;height:100%;object-fit:cover;border-radius:8px;background:#3c4043}
-.song-info{min-width:0;flex:1 1 auto}
-.song-name,.artist{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.song-name{font-size:14px;font-weight:600}.artist{color:var(--muted);font-size:11px;margin-top:4px}
+/* Record */
+.record-stage{
+  width:min(100%,290px);margin:0 auto;aspect-ratio:1/1;position:relative;
+}
+.record{
+  position:relative;width:100%;height:100%;aspect-ratio:1/1;border-radius:50%;
+  background:
+   repeating-radial-gradient(circle at 50% 50%,#070707 0,#101010 2px,#070707 4px,#151515 6px);
+  box-shadow:inset 0 0 0 2px #202020,0 12px 28px rgba(0,0,0,.45);
+  overflow:hidden;transform:translateZ(0);
+}
+.record::before{content:"";position:absolute;inset:7%;border:1px solid rgba(255,255,255,.055);border-radius:50%}
+.label{
+  position:absolute;left:25%;top:25%;width:50%;height:50%;border-radius:50%;
+  background-position:center;background-size:cover;background-repeat:no-repeat;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)
+}
+.hole{
+  position:absolute;left:50%;top:50%;width:10px;height:10px;transform:translate(-50%,-50%);
+  border-radius:50%;background:#111;border:2px solid #555
+}
+.spin{animation:spin 2.8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
 
-.progress-area{width:100%;margin-top:10px}.range{display:block;width:100%;margin:0;accent-color:var(--accent)}
-.times{display:flex;justify-content:space-between;color:var(--muted);font-size:9px;margin-top:2px}
-.controls{width:100%;display:flex;justify-content:center;align-items:center;gap:5px;margin-top:8px;flex-wrap:wrap}
-.control{min-width:34px;height:32px;padding:0 8px;border:0;border-radius:8px;background:#35363a;color:#e8eaed}
-.control:hover{background:#45464a}.play{min-width:48px;background:var(--accent);color:#202124;font-weight:700}
-.volume{width:100%;margin-top:8px}.device{color:#80868b;font-size:9px;margin-top:6px;text-align:center}
+/* Mini */
+#app.mini .header{height:22px;padding:0;justify-content:flex-end}
+#app.mini .brand{display:none}
+#app.mini .settings-btn{position:absolute;top:5px;right:5px;z-index:20;background:rgba(10,12,16,.72);backdrop-filter:blur(6px)}
+#app.mini .player{height:calc(100vh - 14px);padding:7px;border-radius:13px}
+#app.mini .player-grid{height:100%;gap:6px}
+#app.mini .cover-stage,#app.mini .record-stage{
+  width:min(100%,calc(100vh - 55px));max-width:230px;align-self:center;
+}
+#app.mini .info,#app.mini .progress,#app.mini .secondary-controls,#app.mini .volume,#app.mini .status,#app.mini .device,#app.mini .connect{display:none}
+#app.mini .controls{margin-top:0}
+#app.mini .ctrl{width:31px;height:31px;background:#252a33}
+#app.mini .ctrl.main{width:40px;height:34px}
+#app.mini .player-grid{grid-template-rows:minmax(0,1fr) auto}
+#app.mini .controls{grid-row:2}
 
-.record-wrap{display:none;align-items:center;justify-content:center}
-.record{position:relative;width:100%;height:100%;aspect-ratio:1/1;border-radius:50%;
-background:repeating-radial-gradient(circle,#080808 0,#151515 3px,#080808 6px);
-box-shadow:inset 0 0 0 2px #252525,0 6px 16px rgba(0,0,0,.4);overflow:hidden}
-.record-label{position:absolute;inset:25%;border-radius:50%;background-position:center;background-size:cover;background-repeat:no-repeat}
-.record-hole{position:absolute;left:50%;top:50%;width:9px;height:9px;transform:translate(-50%,-50%);
-border-radius:50%;background:#111;box-shadow:inset 0 0 0 2px #444}
-.record-playing{animation:spin 3s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+/* Micro */
+#app.micro{position:relative;background:transparent}
+#app.micro .header{position:absolute;right:4px;top:4px;width:27px;height:27px;padding:0;z-index:20}
+#app.micro .brand{display:none}
+#app.micro .settings-btn{width:25px;height:25px;background:rgba(8,10,13,.68);backdrop-filter:blur(6px);color:#fff}
+#app.micro .player{
+  width:100%;height:100%;padding:0;border:0;border-radius:0;background:transparent;
+}
+#app.micro .player-grid{width:100%;height:100%;display:block}
+#app.micro .cover-stage,#app.micro .record-stage{width:100%;height:100%;max-width:none;margin:0}
+#app.micro .cover{border-radius:10px}
+#app.micro .info,#app.micro .progress,#app.micro .secondary-controls,#app.micro .volume,#app.micro .status,#app.micro .device,#app.micro .connect{display:none}
+#app.micro .controls{
+  position:absolute;left:50%;bottom:7px;transform:translateX(-50%);
+  margin:0;padding:5px 6px;border-radius:999px;background:rgba(8,10,13,.76);backdrop-filter:blur(7px);
+  opacity:0;transition:opacity .12s;
+}
+#app.micro .player:hover .controls{opacity:1}
+#app.micro .ctrl{width:28px;height:28px;border-radius:50%;background:transparent;font-size:11px}
+#app.micro .ctrl:hover{background:#2b313b}
+#app.micro .ctrl.main{width:30px;height:30px;color:#fff;background:#2b313b}
 
-.micro-overlay{position:absolute;left:0;right:0;bottom:0;height:42px;display:flex;align-items:center;justify-content:center;gap:4px;
-background:linear-gradient(transparent,rgba(0,0,0,.85));border-radius:0 0 8px 8px;opacity:0;pointer-events:none;transition:opacity .12s}
-.art-wrap:hover .micro-overlay{opacity:1;pointer-events:auto}
-.micro-control{width:27px;height:27px;padding:0;border:0;border-radius:50%;background:rgba(20,20,20,.9);color:#fff;font-size:10px}
-.micro-control:hover{background:#45464a}
-.micro-settings{position:absolute;right:3px;bottom:3px;width:20px;height:20px;padding:0;background:rgba(20,20,20,.9);color:#fff;font-size:10px;z-index:5}
-.micro-settings:hover{background:#45464a}
+/* Jumbo */
+#app.jumbo{padding:14px}
+#app.jumbo .player-grid{grid-template-columns:minmax(0,1.15fr) minmax(210px,.85fr);align-items:center}
+#app.jumbo .cover-stage,#app.jumbo .record-stage{width:min(100%,380px)}
+#app.jumbo .info{text-align:left}
+#app.jumbo .title{font-size:21px}
+#app.jumbo .artist{font-size:14px}
+#app.jumbo .ctrl.main{width:50px;height:42px}
+#app.jumbo .ctrl{width:39px;height:38px}
 
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-.link,.game-menu button{width:100%;min-width:0;height:35px;padding:0 10px;border:1px solid var(--border);border-radius:8px;background:#292a2d;color:#e8eaed;text-align:left;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.link:hover,.game-menu button:hover{background:#35363a}
-.game-area{width:100%;margin-top:8px}.game-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.game-title{font-size:13px;font-weight:600}.back{height:28px;border:0;border-radius:7px;background:#35363a;color:#e8eaed;font-size:10px}
-.game-center{text-align:center;padding:8px}.game-button{width:100%;height:105px;border:0;border-radius:8px;background:#35363a;color:#e8eaed;font-size:20px}
-.score{font-size:28px;margin:8px 0}.guess-input{width:100%;height:34px;padding:0 9px;border:1px solid var(--border);border-radius:8px;background:#202124;color:#e8eaed;outline:none}
-canvas{display:block;width:100%;max-width:280px;height:auto;margin:0 auto;border:1px solid var(--border);border-radius:9px;background:#202124}
+/* Quick links/games */
+.section{margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:11px}
+.section-title{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.link{
+  min-width:0;height:35px;border-radius:9px;background:var(--card2);cursor:pointer;font-size:11px;text-align:left;padding:0 10px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.link:hover{background:#282e38}
+.games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.game-btn{height:35px;border-radius:9px;background:var(--card2);cursor:pointer;font-size:11px}
+.game-btn:hover{background:#282e38}
+.game-area{margin-top:8px}.game-back{float:right;height:27px;padding:0 9px;border-radius:8px;background:#252a33;cursor:pointer;font-size:10px}
+.game-card{clear:both;padding:8px;text-align:center}.big-number{font-size:34px;font-weight:800;margin:6px 0}
+.game-action{width:100%;height:70px;border-radius:10px;background:#252a33;cursor:pointer}.guess-input{width:100%;height:35px;border-radius:8px;border:1px solid var(--line);background:#101218;color:#fff;padding:0 9px}
+#snakeCanvas{width:100%;max-width:280px;height:auto;border-radius:9px;background:#101218;border:1px solid var(--line)}
 
-.settings-panel{position:fixed;top:4px;right:4px;width:min(240px,calc(100vw - 8px));max-height:calc(100vh - 8px);padding:13px;background:#292a2d;border:1px solid #4a4d50;border-radius:11px;box-shadow:0 10px 30px rgba(0,0,0,.45);overflow-y:auto;z-index:1000}
-.settings-title{font-size:14px;font-weight:700;margin-bottom:12px}
-.setting-label{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
-.mode-grid,.style-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin-bottom:12px}
-.mode-button,.style-button{width:100%;min-width:0;height:32px;border:1px solid var(--border);border-radius:7px;background:#202124;color:#e8eaed;font-size:11px}
-.mode-button.active,.style-button.active{background:#303b4c;border-color:#8ab4f8;color:#a8c7fa}
-.setting-row{min-height:34px;display:flex;align-items:center;justify-content:space-between;font-size:11px}
-.switch{position:relative;width:34px;height:20px}.switch input{opacity:0;width:0;height:0}
-.slider{position:absolute;inset:0;border-radius:20px;background:#45464a}.slider:before{content:"";position:absolute;width:14px;height:14px;left:3px;top:3px;border-radius:50%;background:#9aa0a6;transition:.15s}
-.switch input:checked + .slider{background:#6d93c5}.switch input:checked + .slider:before{transform:translateX(14px);background:#e8eaed}
-.settings-close{float:right;border:0;background:transparent;color:var(--muted);font-size:16px}
-.reconnect{width:100%;height:32px;border:0;border-radius:7px;background:#35363a;color:#e8eaed}
+/* Settings */
+#settings{
+  position:fixed;inset:0;z-index:1000;display:flex;align-items:flex-start;justify-content:center;
+  padding:8px;background:rgba(0,0,0,.38);backdrop-filter:blur(3px)
+}
+.settings-card{
+  width:min(270px,100%);max-height:calc(100vh - 16px);overflow:auto;margin-top:0;
+  background:#171a20;border:1px solid #353b46;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.5);padding:13px
+}
+.settings-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.settings-title{font-weight:800;font-size:14px}.close-settings{width:28px;height:28px;border-radius:50%;background:#252a33;cursor:pointer}
+.setting-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:800;margin:11px 0 7px}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+.choice{height:33px;border-radius:8px;background:#101218;border:1px solid var(--line);cursor:pointer;font-size:10px}
+.choice.active{border-color:#7ea7ef;background:#202a3c}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;min-height:34px;font-size:11px}
+.toggle{appearance:none;width:34px;height:20px;border-radius:20px;background:#3a4049;position:relative;cursor:pointer;outline:none}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#b6bdc8;transition:.12s}
+.toggle:checked{background:#6b91d0}.toggle:checked::after{transform:translateX(14px);background:#fff}
+.reconnect{width:100%;height:34px;border-radius:9px;background:#252a33;cursor:pointer;font-size:10px}
+.note{font-size:9px;line-height:1.45;color:var(--muted);margin-top:8px}
 
-body.micro-mode{padding:0;overflow:hidden;background:transparent}
-body.micro-mode .topbar{position:absolute;top:3px;right:3px;width:22px;height:22px;margin:0;z-index:50}
-body.micro-mode .settings-button{width:21px;height:21px;background:rgba(20,20,20,.78);font-size:10px}
-body.micro-mode .player-card{width:100%;height:100%;padding:0;margin:0;background:transparent;border:0}
-body.micro-mode .song{height:100%;display:block}
-body.micro-mode .art-wrap{width:100%;height:100%;aspect-ratio:1/1;flex:none}
-body.micro-mode .art{width:100%;height:100%;border-radius:9px}
-body.micro-mode .section,body.micro-mode .song-info,body.micro-mode .progress-area,body.micro-mode .controls,body.micro-mode .volume,body.micro-mode .device,
-body.micro-mode #connectStatus,body.micro-mode .quick-section,body.micro-mode .games-section{display:none}
-body.micro-mode .micro-overlay{height:38px}
-body.micro-mode.record-style .art-wrap{display:none}
-body.micro-mode.record-style .record-wrap{display:flex;width:100%;height:100%;flex:none}
-body.micro-mode .micro-settings{display:block}
-
-body.mini-mode{padding:6px;overflow:hidden}
-body.mini-mode .quick-section,body.mini-mode .games-section{display:none}
-body.mini-mode .topbar{position:absolute;top:2px;right:2px;width:24px;height:24px;margin:0;z-index:50}
-body.mini-mode .settings-button{display:block;width:23px;height:23px;background:rgba(20,20,20,.8);font-size:11px}
-body.mini-mode .player-card{height:100%;padding:6px;margin:0}
-body.mini-mode .section,body.mini-mode .song-info,body.mini-mode .progress-area,body.mini-mode .volume,body.mini-mode .device,body.mini-mode #connectStatus{display:none}
-body.mini-mode .song{height:100%;display:block}
-body.mini-mode .art-wrap,body.mini-mode .record-wrap{width:min(100%,calc(100vh - 18px));height:auto;aspect-ratio:1/1;margin:0 auto}
-body.mini-mode .art{width:100%;height:100%}
-body.mini-mode .micro-overlay{opacity:1;pointer-events:auto;height:42px}
-body.mini-mode .micro-settings{display:none}
-body.mini-mode.record-style .art-wrap{display:none}
-body.mini-mode.record-style .record-wrap{display:flex}
-body.mini-mode .record{width:100%;height:100%}
-
-body.normal-mode{overflow-x:hidden;overflow-y:auto}
-body.jumbo-mode{padding:14px;overflow-x:hidden;overflow-y:auto}
-body.jumbo-mode .art-wrap,body.jumbo-mode .record-wrap{width:clamp(90px,24vw,145px);height:auto;aspect-ratio:1/1;flex:0 0 clamp(90px,24vw,145px)}
-body.jumbo-mode .song-name{font-size:18px}.body.jumbo-mode .artist{font-size:13px}
-body.jumbo-mode .control{height:38px}.body.jumbo-mode .play{min-width:58px}
-
-body.record-style .record-wrap{display:flex}
-body.record-style .art-wrap{display:none}
-body.record-style .record-wrap{aspect-ratio:1/1;height:auto}
-body.record-style .song > .record-wrap{flex:0 0 auto}
-
-@media(max-width:260px){
-  body.normal-mode,body.jumbo-mode{padding:6px}
-  .card{padding:8px}
-  .song{gap:6px}
-  .art-wrap,.record-wrap{width:52px;height:auto;aspect-ratio:1/1;flex:0 0 52px}
-  .control{min-width:28px;height:28px;padding:0 5px;font-size:11px}
-  .grid{grid-template-columns:1fr}
-  .settings-panel{width:calc(100vw - 6px);left:3px;right:3px;top:3px;max-height:calc(100vh - 6px);padding:9px}
+@media(max-width:280px){
+  #app.normal,#app.jumbo{padding:6px}
+  .player{padding:9px}
+  .links,.games{grid-template-columns:1fr}
+  #app.jumbo .player-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
-<body class="normal-mode">
-<div class="topbar"><button id="settingsBtn" class="settings-button" title="Settings">⚙</button></div>
+<body>
+<div id="app" class="normal">
+  <div class="header">
+    <div class="brand">My Hub</div>
+    <button id="settingsBtn" class="settings-btn" aria-label="Settings">⚙</button>
+  </div>
 
-<div class="card player-card">
-  <div class="section">Spotify</div>
-  <div class="song">
-    <div class="art-wrap">
-      <img id="art" class="art" alt="" draggable="false">
-      <div class="micro-overlay">
-        <button id="microPrev" class="micro-control" title="Previous">⏮</button>
-        <button id="microPlay" class="micro-control" title="Play / Pause">▶</button>
-        <button id="microNext" class="micro-control" title="Next">⏭</button>
+  <main class="player">
+    <div class="player-grid">
+      <div id="coverStage" class="cover-stage">
+        <img id="cover" class="cover" alt="" draggable="false">
       </div>
-      <button id="microSettings" class="micro-settings" title="Settings">⚙</button>
-    </div>
-    <div class="record-wrap">
-      <div id="record" class="record">
-        <div id="recordLabel" class="record-label"></div>
-        <div class="record-hole"></div>
+      <div id="recordStage" class="record-stage hidden">
+        <div id="record" class="record">
+          <div id="label" class="label"></div>
+          <div class="hole"></div>
+        </div>
       </div>
+
+      <div class="info">
+        <div id="track" class="title">Nothing playing</div>
+        <div id="artist" class="artist">Spotify</div>
+      </div>
+
+      <div class="progress">
+        <input id="seek" type="range" min="0" max="1000" value="0" aria-label="Song progress">
+        <div class="times"><span id="elapsed">0:00</span><span id="total">0:00</span></div>
+      </div>
+
+      <div class="controls">
+        <button id="prev" class="ctrl" title="Previous">⏮</button>
+        <button id="play" class="ctrl main" title="Play / Pause">▶</button>
+        <button id="next" class="ctrl" title="Next">⏭</button>
+      </div>
+
+      <div class="secondary-controls">
+        <button id="shuffle" class="ctrl" title="Shuffle">🔀</button>
+        <button id="repeat" class="ctrl" title="Repeat">🔁</button>
+      </div>
+
+      <div class="volume">
+        <input id="volume" type="range" min="0" max="100" value="50" aria-label="Volume">
+      </div>
+
+      <div id="device" class="device">Spotify</div>
+      <div id="status" class="status">Not connected</div>
+      <button id="connect" class="connect">Connect Spotify</button>
     </div>
-    <div class="song-info">
-      <div id="song" class="song-name">Nothing playing</div>
-      <div id="artist" class="artist">Spotify</div>
+  </main>
+
+  <section id="quickSection" class="section">
+    <div class="section-title">Quick Links</div>
+    <div class="links">
+      <button class="link" data-url="https://www.google.com">Google</button>
+      <button class="link" data-url="https://www.youtube.com">YouTube</button>
+      <button class="link" data-url="https://drive.google.com">Google Drive</button>
+      <button class="link" data-url="https://github.com">GitHub</button>
     </div>
-  </div>
-  <div class="progress-area">
-    <input id="progress" class="range" type="range" min="0" max="1000" value="0">
-    <div class="times"><span id="current">0:00</span><span id="duration">0:00</span></div>
-  </div>
-  <div id="playerControls" class="controls">
-    <button id="shuffle" class="control" title="Shuffle">🔀</button>
-    <button id="prev" class="control" title="Previous">⏮</button>
-    <button id="play" class="control play" title="Play / Pause">▶</button>
-    <button id="next" class="control" title="Next">⏭</button>
-    <button id="repeat" class="control" title="Repeat">🔁</button>
-  </div>
-  <div class="volume"><input id="volume" class="range" type="range" min="0" max="100" value="50"></div>
-  <div id="device" class="device">Spotify</div>
-  <div id="connectStatus" class="status">Not connected</div>
+  </section>
+
+  <section id="gamesSection" class="section">
+    <div class="section-title">Mini Games</div>
+    <div id="gameMenu" class="games">
+      <button id="clicker" class="game-btn">🖱 Clicker</button>
+      <button id="guess" class="game-btn">🔢 Number Guess</button>
+      <button id="reaction" class="game-btn">⚡ Reaction</button>
+      <button id="snake" class="game-btn">🐍 Snake</button>
+    </div>
+    <div id="gameArea" class="game-area hidden"></div>
+  </section>
 </div>
 
-<div id="quickSection" class="card quick-section">
-  <div class="section">Quick Links</div>
-  <div class="grid">
-    <button class="link" data-url="https://www.google.com">Google</button>
-    <button class="link" data-url="https://www.youtube.com">YouTube</button>
-    <button class="link" data-url="https://drive.google.com">Google Drive</button>
-    <button class="link" data-url="https://github.com">GitHub</button>
-  </div>
-</div>
+<div id="settings" class="hidden">
+  <div class="settings-card">
+    <div class="settings-head">
+      <div class="settings-title">Settings</div>
+      <button id="closeSettings" class="close-settings">×</button>
+    </div>
 
-<div id="gamesSection" class="card games-section">
-  <div class="section">Mini Games</div>
-  <div id="gameMenu" class="grid game-menu">
-    <button id="clicker">🖱 Clicker</button>
-    <button id="guess">🔢 Number Guess</button>
-    <button id="reaction">⚡ Reaction</button>
-    <button id="snake">🐍 Snake</button>
-  </div>
-  <div id="gameArea" class="game-area hidden"></div>
-</div>
+    <div class="setting-label">Display Size</div>
+    <div class="choice-grid">
+      <button class="choice" data-mode="micro">Micro</button>
+      <button class="choice" data-mode="mini">Mini</button>
+      <button class="choice" data-mode="normal">Normal</button>
+      <button class="choice" data-mode="jumbo">Jumbo</button>
+    </div>
 
-<div id="settingsPanel" class="settings-panel hidden">
-  <button id="closeSettings" class="settings-close" title="Close">×</button>
-  <div class="settings-title">My Hub Settings</div>
-  <div class="setting-label">Display Size</div>
-  <div class="mode-grid">
-    <button class="mode-button" data-mode="micro">Micro</button>
-    <button class="mode-button" data-mode="mini">Mini</button>
-    <button class="mode-button" data-mode="normal">Normal</button>
-    <button class="mode-button" data-mode="jumbo">Jumbo</button>
+    <div class="setting-label">Player Style</div>
+    <div class="choice-grid">
+      <button class="choice" data-style="cover">Cover</button>
+      <button class="choice" data-style="record">Record</button>
+    </div>
+
+    <div class="setting-label">Panels</div>
+    <div class="toggle-row"><span>Quick Links</span><input id="linksToggle" class="toggle" type="checkbox"></div>
+    <div class="toggle-row"><span>Mini Games</span><input id="gamesToggle" class="toggle" type="checkbox"></div>
+
+    <div class="setting-label">Spotify</div>
+    <button id="reconnect" class="reconnect">Reconnect Spotify</button>
+    <div class="note">Spotify playback controls use the Web API. Some playback controls require Spotify Premium.</div>
   </div>
-  <div class="setting-label">Player Style</div>
-  <div class="style-grid">
-    <button class="style-button" data-style="cover">Cover</button>
-    <button class="style-button" data-style="record">Record</button>
-  </div>
-  <div class="setting-row"><span>Quick Links</span><label class="switch"><input id="linksToggle" type="checkbox"><span class="slider"></span></label></div>
-  <div class="setting-row"><span>Mini Games</span><label class="switch"><input id="gamesToggle" type="checkbox"><span class="slider"></span></label></div>
-  <div style="margin-top:9px"><button id="disconnect" class="reconnect">Reconnect Spotify</button></div>
 </div>
 
 <script>
 (() => {
-  "use strict";
+"use strict";
 
-  const CLIENT_ID = "d3445d44d1314d07b1d7a7904bbe5a48";
-  const AUTH_URL = "https://dexxx02348.github.io/my-hub/auth.html";
-  const TRUSTED_ORIGIN = "https://dexxx02348.github.io";
-  const MODES = {
-    micro: [86,86],
-    mini: [230,280],
-    normal: [390,680],
-    jumbo: [560,800]
-  };
+const ORIGIN="https://dexxx02348.github.io";
+const AUTH=ORIGIN+"/my-hub/auth.html";
+const CLIENT_ID="d3445d44d1314d07b1d7a7904bbe5a48";
+const SCOPES="user-read-playback-state user-modify-playback-state user-read-currently-playing";
+const MODES={
+  micro:{w:86,h:86},
+  mini:{w:230,h:280},
+  normal:{w:390,h:680},
+  jumbo:{w:560,h:800}
+};
 
-  const $ = (id) => document.getElementById(id);
-  const art = $("art"), song = $("song"), artist = $("artist"), play = $("play");
-  const progress = $("progress"), current = $("current"), duration = $("duration");
-  const volume = $("volume"), device = $("device"), status = $("connectStatus");
-  const record = $("record"), recordLabel = $("recordLabel");
+const $=id=>document.getElementById(id);
+const app=$("app"),settings=$("settings"),coverStage=$("coverStage"),recordStage=$("recordStage");
+const cover=$("cover"),record=$("record"),label=$("label"),track=$("track"),artist=$("artist");
+const seek=$("seek"),elapsed=$("elapsed"),total=$("total"),play=$("play"),status=$("status"),device=$("device");
+let mode=["micro","mini","normal","jumbo"].includes(localStorage.getItem("myhub_mode"))?localStorage.getItem("myhub_mode"):"normal";
+let style=localStorage.getItem("myhub_style")==="record"?"record":"cover";
+let linksOn=localStorage.getItem("myhub_links")!=="false";
+let gamesOn=localStorage.getItem("myhub_games")!=="false";
+let playback=null,lastRefresh=0,draggingSeek=false;
 
-  let playback = null, updating = false, progressDragging = false;
-  let mode = ["micro","mini","normal","jumbo"].includes(localStorage.getItem("myhub_mode"))
-    ? localStorage.getItem("myhub_mode") : "normal";
-  let style = localStorage.getItem("myhub_style") === "record" ? "record" : "cover";
-  let linksOn = localStorage.getItem("myhub_links") !== "false";
-  let gamesOn = localStorage.getItem("myhub_games") !== "false";
+function post(type,extra={}) {
+  if(window.parent!==window) window.parent.postMessage({type,...extra},ORIGIN);
+}
+function fmt(ms){
+  const s=Math.max(0,Math.floor((ms||0)/1000));
+  return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+}
+function setMode(next,announce=true){
+  mode=MODES[next]?next:"normal";
+  app.className=mode;
+  document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
+  localStorage.setItem("myhub_mode",mode);
+  if(announce) post("myhub-resize",{mode,width:MODES[mode].w,height:MODES[mode].h});
+}
+function setStyle(next){
+  style=next==="record"?"record":"cover";
+  document.querySelectorAll('[data-style]').forEach(b=>b.classList.toggle("active",b.dataset.style===style));
+  coverStage.classList.toggle("hidden",style==="record");
+  recordStage.classList.toggle("hidden",style!=="record");
+  localStorage.setItem("myhub_style",style);
+  updateSpin();
+}
+function setPanels(){
+  $("quickSection").classList.toggle("hidden",!linksOn || mode==="mini" || mode==="micro");
+  $("gamesSection").classList.toggle("hidden",!gamesOn || mode==="mini" || mode==="micro");
+  $("linksToggle").checked=linksOn;$("gamesToggle").checked=gamesOn;
+}
+function updateSpin(){record.classList.toggle("spin",style==="record" && !!playback?.is_playing)}
+function rememberArtwork(url){
+  if(!url){cover.removeAttribute("src");label.style.backgroundImage="";return}
+  cover.src=url;label.style.backgroundImage=`url("${url.replaceAll('"','%22')}")`;
+}
 
-  function post(type, payload={}) {
-    if (window.parent && window.parent !== window) {
-      window.parent.postMessage({type, ...payload}, TRUSTED_ORIGIN);
+async function refreshToken(){
+  const rt=localStorage.getItem("spotify_refresh_token");
+  if(!rt) throw new Error("Spotify is not connected.");
+  const r=await fetch("https://accounts.spotify.com/api/token",{
+    method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:new URLSearchParams({grant_type:"refresh_token",refresh_token:rt,client_id:CLIENT_ID})
+  });
+  const d=await r.json().catch(()=>null);
+  if(!r.ok){
+    if(d?.error==="invalid_grant"){
+      ["spotify_access_token","spotify_refresh_token","spotify_expires_at"].forEach(k=>localStorage.removeItem(k));
+      throw new Error("Spotify login expired.");
     }
+    throw new Error(d?.error_description||d?.error||"Token refresh failed.");
   }
+  if(d.access_token)localStorage.setItem("spotify_access_token",d.access_token);
+  if(d.refresh_token)localStorage.setItem("spotify_refresh_token",d.refresh_token);
+  localStorage.setItem("spotify_expires_at",String(Date.now()+d.expires_in*1000));
+  return d.access_token;
+}
+async function token(){
+  const t=localStorage.getItem("spotify_access_token");
+  const exp=Number(localStorage.getItem("spotify_expires_at")||0);
+  if(t && Date.now()<exp-60000)return t;
+  return refreshToken();
+}
+async function api(path,opts={},retry=true){
+  const t=await token();
+  const r=await fetch("https://api.spotify.com/v1"+path,{
+    ...opts,
+    headers:{...(opts.headers||{}),Authorization:`Bearer ${t}`,"Content-Type":"application/json"}
+  });
+  if(r.status===401&&retry){await refreshToken();return api(path,opts,false)}
+  if(r.status===204)return null;
+  const d=await r.json().catch(()=>null);
+  if(!r.ok)throw new Error(d?.error?.message||`Spotify error ${r.status}`);
+  return d;
+}
+async function sync(){
+  try{
+    playback=await api("/me/player");
+    if(!playback?.item){
+      track.textContent="Nothing playing";artist.textContent="Spotify";rememberArtwork("");
+      play.textContent="▶";device.textContent="Spotify";status.textContent="Connected";updateSpin();return;
+    }
+    const item=playback.item;
+    track.textContent=item.name||"Unknown";
+    artist.textContent=(item.artists||[]).map(x=>x.name).join(", ")||"Unknown artist";
+    const img=item.album?.images?.[0]?.url||"";
+    rememberArtwork(img);
+    const pos=playback.progress_ms||0,dur=item.duration_ms||0;
+    if(!draggingSeek)seek.value=dur?String(Math.round(pos/dur*1000)):0;
+    elapsed.textContent=fmt(pos);total.textContent=fmt(dur);
+    play.textContent=playback.is_playing?"⏸":"▶";
+    device.textContent=playback.device?.name?`Playing on ${playback.device.name}`:"Spotify";
+    status.textContent="Connected";updateSpin();
+    lastRefresh=Date.now();
+  }catch(e){
+    status.textContent=e.message||"Spotify unavailable";
+  }
+}
+async function command(fn){
+  try{await fn();setTimeout(sync,250)}catch(e){status.textContent=e.message||"Command failed"}
+}
+$("play").onclick=()=>command(()=>api(playback?.is_playing?"/me/player/pause":"/me/player/play",{method:"PUT"}));
+$("prev").onclick=()=>command(()=>api("/me/player/previous",{method:"POST"}));
+$("next").onclick=()=>command(()=>api("/me/player/next",{method:"POST"}));
+$("shuffle").onclick=()=>command(()=>api("/me/player/shuffle?state="+(!playback?.shuffle_state),{method:"PUT"}));
+$("repeat").onclick=()=>command(()=>{
+  const state=playback?.repeat_state==="off"?"context":playback?.repeat_state==="context"?"track":"off";
+  return api("/me/player/repeat?state="+state,{method:"PUT"});
+});
+$("volume").oninput=()=>command(()=>api("/me/player/volume?volume_percent="+encodeURIComponent($("volume").value),{method:"PUT"}));
+seek.addEventListener("input",()=>{
+  draggingSeek=true;
+  const dur=playback?.item?.duration_ms||0;
+  elapsed.textContent=fmt(Number(seek.value)/1000*dur);
+});
+seek.addEventListener("change",()=>{draggingSeek=false;command(()=>{
+  const dur=playback?.item?.duration_ms||0;
+  return api("/me/player/seek?position_ms="+Math.round(Number(seek.value)/1000*dur),{method:"PUT"});
+})});
 
-  function applyMode(newMode, tellParent=true) {
-    if (!MODES[newMode]) newMode = "normal";
-    mode = newMode;
-    document.body.classList.remove("micro-mode","mini-mode","normal-mode","jumbo-mode");
-    document.body.classList.add(newMode + "-mode");
-    document.querySelectorAll(".mode-button").forEach(b => b.classList.toggle("active", b.dataset.mode === newMode));
-    localStorage.setItem("myhub_mode", newMode);
-    if (tellParent) post("myhub-resize",{mode:newMode,width:MODES[newMode][0],height:MODES[newMode][1]});
-  }
-
-  function applyStyle(newStyle) {
-    style = newStyle === "record" ? "record" : "cover";
-    document.body.classList.toggle("record-style", style === "record");
-    document.querySelectorAll(".style-button").forEach(b => b.classList.toggle("active", b.dataset.style === style));
-    localStorage.setItem("myhub_style", style);
-    updateRecordAnimation();
-  }
-
-  function updateToggles() {
-    $("linksToggle").checked = linksOn;
-    $("gamesToggle").checked = gamesOn;
-    $("quickSection").classList.toggle("hidden", !linksOn);
-    $("gamesSection").classList.toggle("hidden", !gamesOn);
-  }
-
-  function formatTime(ms) {
-    const s = Math.max(0, Math.floor((ms || 0) / 1000));
-    return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
-  }
-
-  function updateRecordArtwork(url) {
-    recordLabel.style.backgroundImage = url ? `url("${url.replaceAll('"','%22')}")` : "";
-  }
-  function updateRecordAnimation() {
-    record.classList.toggle("record-playing", style === "record" && !!playback?.is_playing);
-  }
-
-  async function refreshToken() {
-    const refresh = localStorage.getItem("spotify_refresh_token");
-    if (!refresh) throw new Error("Spotify is not connected.");
-    const body = new URLSearchParams({grant_type:"refresh_token",refresh_token:refresh,client_id:CLIENT_ID});
-    const r = await fetch("https://accounts.spotify.com/api/token",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body});
-    const data = await r.json().catch(()=>null);
-    if (!r.ok) throw new Error(data?.error_description || data?.error || "Spotify login expired.");
-    if (data.access_token) localStorage.setItem("spotify_access_token",data.access_token);
-    if (data.refresh_token) localStorage.setItem("spotify_refresh_token",data.refresh_token);
-    localStorage.setItem("spotify_expires_at",String(Date.now()+data.expires_in*1000));
-    return data.access_token;
-  }
-
-  async function getToken() {
-    const token = localStorage.getItem("spotify_access_token");
-    const expiry = Number(localStorage.getItem("spotify_expires_at") || 0);
-    if (token && Date.now() < expiry - 60000) return token;
-    return refreshToken();
-  }
-
-  async function spotify(endpoint, options={}, retry=true) {
-    const token = await getToken();
-    let r = await fetch("https://api.spotify.com/v1"+endpoint,{
-      ...options,
-      headers:{...(options.headers||{}),Authorization:`Bearer ${token}`,"Content-Type":"application/json"}
+function connect(){
+  const verifier=crypto.randomUUID()+crypto.randomUUID()+crypto.randomUUID();
+  localStorage.setItem("spotify_pkce_verifier",verifier);
+  crypto.subtle.digest("SHA-256",new TextEncoder().encode(verifier)).then(hash=>{
+    let s=btoa(String.fromCharCode(...new Uint8Array(hash))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+    const q=new URLSearchParams({
+      client_id:CLIENT_ID,response_type:"code",redirect_uri:AUTH,
+      scope:SCOPES,code_challenge_method:"S256",code_challenge:s
     });
-    if (r.status === 401 && retry) {
-      await refreshToken();
-      return spotify(endpoint,options,false);
-    }
-    if (r.status === 204) return null;
-    const data = await r.json().catch(()=>null);
-    if (!r.ok) throw new Error(data?.error?.message || `Spotify error ${r.status}`);
-    return data;
-  }
+    window.open("https://accounts.spotify.com/authorize?"+q.toString(),"myhubSpotifyAuth","width=520,height=760");
+  });
+}
+$("connect").onclick=connect;$("reconnect").onclick=connect;
+$("settingsBtn").onclick=()=>$("settings").classList.remove("hidden");
+$("closeSettings").onclick=()=>$("settings").classList.add("hidden");
+$("settings").addEventListener("click",e=>{if(e.target===settings)settings.classList.add("hidden")});
+document.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{setMode(b.dataset.mode);setPanels()});
+document.querySelectorAll("[data-style]").forEach(b=>b.onclick=()=>setStyle(b.dataset.style));
+$("linksToggle").onchange=()=>{linksOn=$("linksToggle").checked;localStorage.setItem("myhub_links",String(linksOn));setPanels()};
+$("gamesToggle").onchange=()=>{gamesOn=$("gamesToggle").checked;localStorage.setItem("myhub_games",String(gamesOn));setPanels()};
+document.querySelectorAll(".link").forEach(b=>b.onclick=()=>window.open(b.dataset.url,"_blank","noopener,noreferrer"));
 
-  async function updatePlayback() {
-    if (updating) return;
-    updating = true;
-    try {
-      playback = await spotify("/me/player");
-      if (!playback?.item) {
-        song.textContent="Nothing playing"; artist.textContent="Spotify"; art.removeAttribute("src");
-        updateRecordArtwork(""); play.textContent="▶"; $("microPlay").textContent="▶";
-        status.textContent="Connected"; updateRecordAnimation(); return;
-      }
-      const item = playback.item;
-      song.textContent=item.name || "Unknown";
-      artist.textContent=(item.artists||[]).map(a=>a.name).join(", ") || "Unknown artist";
-      const image=item.album?.images?.[1]?.url || item.album?.images?.[0]?.url || "";
-      if (image) { art.src=image; updateRecordArtwork(image); }
-      const pos=playback.progress_ms||0, total=item.duration_ms||0;
-      current.textContent=formatTime(pos); duration.textContent=formatTime(total);
-      if (!progressDragging) progress.value=total ? String((pos/total)*1000) : "0";
-      const playing=!!playback.is_playing;
-      play.textContent=playing?"⏸":"▶"; $("microPlay").textContent=playing?"⏸":"▶";
-      device.textContent=playback.device?.name ? "Playing on "+playback.device.name : "Spotify";
-      status.textContent="Connected"; updateRecordAnimation();
-    } catch (e) {
-      status.textContent = e.message || "Spotify unavailable";
-    } finally { updating=false; }
-  }
+window.addEventListener("message",e=>{
+  if(e.origin!==ORIGIN)return;
+  if(e.data?.type==="spotify-auth-success" || e.data?.type==="spotify-auth-error") sync();
+});
 
-  async function togglePlay() {
-    try {
-      await spotify(playback?.is_playing ? "/me/player/pause" : "/me/player/play",{method:"PUT"});
-      setTimeout(updatePlayback,300);
-    } catch(e){status.textContent=e.message}
-  }
-  async function prev(){try{await spotify("/me/player/previous",{method:"POST"});setTimeout(updatePlayback,350)}catch(e){status.textContent=e.message}}
-  async function next(){try{await spotify("/me/player/next",{method:"POST"});setTimeout(updatePlayback,350)}catch(e){status.textContent=e.message}}
-  async function setVolume(v){try{await spotify("/me/player/volume?volume_percent="+encodeURIComponent(v),{method:"PUT"});}catch(e){status.textContent=e.message}}
-  async function toggleShuffle(){try{const on=!playback?.shuffle_state;await spotify("/me/player/shuffle?state="+on,{method:"PUT"});updatePlayback()}catch(e){status.textContent=e.message}}
-  async function toggleRepeat(){try{const nextMode=playback?.repeat_state==="off"?"context":playback?.repeat_state==="context"?"track":"off";await spotify("/me/player/repeat?state="+nextMode,{method:"PUT"});updatePlayback()}catch(e){status.textContent=e.message}}
-  async function seek(v){
-    if(!playback?.item?.duration_ms) return;
-    const ms=Math.round(Number(v)/1000*playback.item.duration_ms);
-    try{await spotify("/me/player/seek?position_ms="+ms,{method:"PUT"});setTimeout(updatePlayback,150)}catch(e){status.textContent=e.message}
-  }
+function showGame(title,html){
+  $("gameMenu").classList.add("hidden");$("gameArea").classList.remove("hidden");
+  $("gameArea").innerHTML=`<div><b style="font-size:12px">${title}</b><button id="backGame" class="game-back">Back</button></div>${html}`;
+  $("backGame").onclick=()=>{ $("gameArea").classList.add("hidden");$("gameMenu").classList.remove("hidden");$("gameArea").innerHTML=""};
+}
+$("clicker").onclick=()=>{
+  showGame("Clicker",`<div class="game-card"><div>Clicks</div><div id="cscore" class="big-number">0</div><button id="ctarget" class="game-action">CLICK</button></div>`);
+  let n=0;$("ctarget").onclick=()=>$("cscore").textContent=String(++n);
+};
+$("guess").onclick=()=>{
+  showGame("Number Guess",`<div class="game-card"><div id="ghint">Guess 1–100</div><div style="height:7px"></div><input id="ginput" class="guess-input" inputmode="numeric" placeholder="Number"><div style="height:7px"></div><button id="gbutton" class="game-action" style="height:45px">Guess</button></div>`);
+  const target=1+Math.floor(Math.random()*100);let tries=0;
+  $("gbutton").onclick=()=>{const n=Number($("ginput").value);if(!n)return;tries++;$("ghint").textContent=n===target?`Correct in ${tries}!`:n<target?"Too low":"Too high"};
+};
+$("reaction").onclick=()=>{
+  showGame("Reaction",`<div class="game-card"><div id="rmsg">Wait...</div><div style="height:7px"></div><button id="rarea" class="game-action">WAIT</button></div>`);
+  let ready=false,start=0,t=setTimeout(()=>{ready=true;start=performance.now();$("rmsg").textContent="GO";$("rarea").textContent="CLICK"},900+Math.random()*2200);
+  $("rarea").onclick=()=>{if(!ready){clearTimeout(t);$("rmsg").textContent="Too early. Click again";$("rarea").textContent="Restart";$("rarea").onclick=()=>document.getElementById("reaction").click()}else{$("rmsg").textContent=Math.round(performance.now()-start)+" ms";$("rarea").textContent="Again";$("rarea").onclick=()=>document.getElementById("reaction").click()}};
+};
+$("snake").onclick=()=>{
+  showGame("Snake",`<div class="game-card"><canvas id="snakeCanvas" width="280" height="280"></canvas><div style="color:var(--muted);font-size:9px;margin-top:6px">Arrow keys</div></div>`);
+  const c=$("snakeCanvas"),ctx=c.getContext("2d"),S=14,G=20;
+  let sn=[[10,10],[9,10],[8,10]],dir=[1,0],next=[1,0],food=[14,10],alive=true;
+  const key=e=>{if(e.key==="ArrowUp"&&dir[1]!==1)next=[0,-1];if(e.key==="ArrowDown"&&dir[1]!==-1)next=[0,1];if(e.key==="ArrowLeft"&&dir[0]!==1)next=[-1,0];if(e.key==="ArrowRight"&&dir[0]!==-1)next=[1,0]};
+  function draw(){ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle="#7ea7ef";ctx.fillRect(food[0]*S,food[1]*S,S,S);ctx.fillStyle="#e8edf4";sn.forEach(([x,y])=>ctx.fillRect(x*S,y*S,S-1,S-1))}
+  function tick(){if(!alive)return;dir=next.slice();const h=[sn[0][0]+dir[0],sn[0][1]+dir[1]];if(h[0]<0||h[1]<0||h[0]>=G||h[1]>=G||sn.some(([x,y])=>x===h[0]&&y===h[1])){alive=false;return}sn.unshift(h);if(h[0]===food[0]&&h[1]===food[1]){do{food=[Math.floor(Math.random()*G),Math.floor(Math.random()*G)]}while(sn.some(([x,y])=>x===food[0]&&y===food[1]))}else sn.pop();draw()}
+  document.addEventListener("keydown",key);draw();const id=setInterval(tick,120);
+  $("backGame").addEventListener("click",()=>{clearInterval(id);document.removeEventListener("keydown",key)},{once:true});
+};
 
-  $("play").onclick=togglePlay; $("microPlay").onclick=togglePlay;
-  $("prev").onclick=prev; $("microPrev").onclick=prev;
-  $("next").onclick=next; $("microNext").onclick=next;
-  $("shuffle").onclick=toggleShuffle; $("repeat").onclick=toggleRepeat;
-  volume.oninput=()=>setVolume(Number(volume.value));
-  progress.addEventListener("input",()=>{progressDragging=true;const total=playback?.item?.duration_ms||0;current.textContent=formatTime(Number(progress.value)/1000*total)});
-  progress.addEventListener("change",()=>{progressDragging=false;seek(progress.value)});
-  document.querySelectorAll(".link").forEach(b=>b.onclick=()=>window.open(b.dataset.url,"_blank","noopener,noreferrer"));
-
-  $("settingsBtn").onclick=()=>$("settingsPanel").classList.remove("hidden");
-  $("microSettings").onclick=(e)=>{e.stopPropagation();$("settingsPanel").classList.remove("hidden")};
-  $("closeSettings").onclick=()=>$("settingsPanel").classList.add("hidden");
-  document.querySelectorAll(".mode-button").forEach(b=>b.onclick=()=>applyMode(b.dataset.mode,true));
-  document.querySelectorAll(".style-button").forEach(b=>b.onclick=()=>applyStyle(b.dataset.style));
-  $("linksToggle").onchange=()=>{linksOn=$("linksToggle").checked;localStorage.setItem("myhub_links",String(linksOn));updateToggles()};
-  $("gamesToggle").onchange=()=>{gamesOn=$("gamesToggle").checked;localStorage.setItem("myhub_games",String(gamesOn));updateToggles()};
-  $("disconnect").onclick=()=>{
-    ["spotify_access_token","spotify_refresh_token","spotify_expires_at"].forEach(k=>localStorage.removeItem(k));
-    window.open(AUTH_URL,"myhubSpotifyAuth","width=500,height=700");
-  };
-
-  function closeGame(){ $("gameArea").classList.add("hidden"); $("gameMenu").classList.remove("hidden"); $("gameArea").innerHTML=""; }
-  function showGame(title,html){$("gameMenu").classList.add("hidden");$("gameArea").classList.remove("hidden");$("gameArea").innerHTML=`<div class="game-header"><div class="game-title">${title}</div><button class="back" id="backGame">Back</button></div>${html}`;$("backGame").onclick=closeGame}
-
-  $("clicker").onclick=()=>{
-    showGame("Clicker",`<div class="game-center"><div>Clicks</div><div id="clickScore" class="score">0</div><button id="clickTarget" class="game-button">CLICK</button></div>`);
-    let n=0;$("clickTarget").onclick=()=>{$("clickScore").textContent=String(++n)};
-  };
-  $("guess").onclick=()=>{
-    showGame("Number Guess",`<div class="game-center"><div>Guess a number from 1–100</div><div id="guessHint" style="margin:10px 0;color:#9aa0a6">Good luck</div><input id="guessInput" class="guess-input" inputmode="numeric" placeholder="Number"><button id="guessBtn" class="game-button" style="height:48px;margin-top:8px">Guess</button></div>`);
-    const target=Math.floor(Math.random()*100)+1;let attempts=0;
-    $("guessBtn").onclick=()=>{const n=Number($("guessInput").value);if(!n)return;attempts++;$("guessHint").textContent=n===target?`Correct in ${attempts} guess${attempts===1?"":"es"}!`:n<target?"Too low":"Too high";if(n===target){$("guessBtn").textContent="New Game";$("guessBtn").onclick=()=>document.getElementById("guess").click()}};
-  };
-  $("reaction").onclick=()=>{
-    showGame("Reaction",`<div class="game-center"><div id="reactionMsg">Wait for green…</div><button id="reactionArea" class="game-button">WAIT</button></div>`);
-    let ready=false,start=0,timer=null; const area=$("reactionArea"),msg=$("reactionMsg");
-    const delay=800+Math.random()*2500; timer=setTimeout(()=>{ready=true;start=performance.now();area.textContent="CLICK!";msg.textContent="GO!";},delay);
-    area.onclick=()=>{if(!ready){clearTimeout(timer);msg.textContent="Too early — restart";area.textContent="Restart";area.onclick=()=>document.getElementById("reaction").click();}else{msg.textContent=`${Math.round(performance.now()-start)} ms`;area.textContent="Again";area.onclick=()=>document.getElementById("reaction").click()}};
-  };
-  $("snake").onclick=()=>{
-    showGame("Snake",`<div class="game-center"><canvas id="snakeCanvas" width="280" height="280"></canvas><div style="margin-top:7px;color:#9aa0a6;font-size:10px">Use arrow keys</div></div>`);
-    const c=$("snakeCanvas"),ctx=c.getContext("2d"),size=14,grid=20;
-    let snake=[[10,10],[9,10],[8,10]],dir=[1,0],next=dir.slice(),food=[14,10],alive=true;
-    function draw(){ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle="#3c4043";ctx.fillRect(food[0]*size,food[1]*size,size,size);ctx.fillStyle="#8ab4f8";snake.forEach(([x,y])=>ctx.fillRect(x*size,y*size,size-1,size-1))}
-    function tick(){if(!alive)return;dir=next.slice();const h=[snake[0][0]+dir[0],snake[0][1]+dir[1]];if(h[0]<0||h[1]<0||h[0]>=grid||h[1]>=grid||snake.some(([x,y])=>x===h[0]&&y===h[1])){alive=false;return}snake.unshift(h);if(h[0]===food[0]&&h[1]===food[1]){do{food=[Math.floor(Math.random()*grid),Math.floor(Math.random()*grid)]}while(snake.some(([x,y])=>x===food[0]&&y===food[1]))}else snake.pop();draw()}
-    const key=(e)=>{const k=e.key;if(k==="ArrowUp"&&dir[1]!==1)next=[0,-1];if(k==="ArrowDown"&&dir[1]!==-1)next=[0,1];if(k==="ArrowLeft"&&dir[0]!==1)next=[-1,0];if(k==="ArrowRight"&&dir[0]!==-1)next=[1,0]};document.addEventListener("keydown",key);draw();const id=setInterval(tick,120);$("backGame").addEventListener("click",()=>{clearInterval(id);document.removeEventListener("keydown",key)},{once:true});
-  };
-
-  document.addEventListener("visibilitychange",()=>{if(!document.hidden)updatePlayback()});
-  updateToggles(); applyStyle(style); applyMode(mode,false);
-
-  // Crucial iframe -> bookmarklet handshake. The parent stays hidden until this is sent.
-  requestAnimationFrame(()=>post("myhub-ready",{mode,width:MODES[mode][0],height:MODES[mode][1]}));
-
-  updatePlayback();
-  setInterval(()=>{if(!document.hidden)updatePlayback()},5000);
-  setInterval(()=>{
-    if(playback?.is_playing && playback.item?.duration_ms && !progressDragging){
-      const v=Number(progress.value)+(5000/playback.item.duration_ms)*1000;
-      progress.value=String(Math.min(1000,v));
-      current.textContent=formatTime(v/1000*playback.item.duration_ms);
-    }
-  },5000);
+setMode(mode,false);setStyle(style);setPanels();
+window.addEventListener("keydown",e=>{if(e.key==="Escape")settings.classList.add("hidden")});
+window.addEventListener("beforeunload",()=>{});
+post("myhub-ready",{mode,width:MODES[mode].w,height:MODES[mode].h});
+sync();
+setInterval(()=>{if(!document.hidden)sync()},5000);
 })();
 </script>
 </body>
